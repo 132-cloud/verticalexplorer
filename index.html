@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nymbus Vertical Concept Explorer</title>
+  <link rel="stylesheet" href="https://use.typekit.net/bpi2fje.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="top-nav" id="topNav">
+    <div class="nav-container">
+      <a href="#" class="nav-logo" onclick="navigateTo('home')">
+        <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1780571440/nymbus-vertical-explorer/nymbus-logo.svg" alt="Nymbus" class="logo-img" />
+        <span class="logo-sub">Vertical Concept Explorer</span>
+      </a>
+      <div class="nav-links">
+        <a href="#" onclick="navigateTo('wizard')">Choose Growth Path</a>
+        <a href="#" onclick="navigateTo('browse')">Browse Concepts</a>
+        <a href="#" onclick="navigateTo('how-it-works')">How It Works</a>
+        <a href="#" onclick="navigateTo('strategy-room')">Strategy Room</a>
+      </div>
+      <button class="nav-toggle" onclick="toggleMobileNav()" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#" onclick="navigateTo('wizard')">Choose Growth Path</a>
+      <a href="#" onclick="navigateTo('browse')">Browse Concepts</a>
+      <a href="#" onclick="navigateTo('how-it-works')">How It Works</a>
+      <a href="#" onclick="navigateTo('strategy-room')">Strategy Room</a>
+    </div>
+  </nav>
+
+  <main id="appContent">
+    <!-- Pages injected by JS -->
+  </main>
+
+  <!-- Strategy Room Modal -->
+  <div class="modal-overlay" id="strategyModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h2>Added to Strategy Room</h2>
+      <p>This concept has been added to your institution's Aligned strategy room. Your team can review, compare, and prioritize concepts collaboratively.</p>
+      <button class="btn btn-primary" onclick="closeModal()">Continue Exploring</button>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
