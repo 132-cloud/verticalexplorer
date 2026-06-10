@@ -7,6 +7,8 @@ const CHAT_STEPS = [
   {
     id: 'growth-goal',
     question: 'What are you trying to grow?',
+    subtitle: 'Select one or more objectives.',
+    multiSelect: true,
     pills: [
       { id: 'deposits', label: 'Deposits' },
       { id: 'fee-income', label: 'Fee income' },
@@ -19,6 +21,8 @@ const CHAT_STEPS = [
   {
     id: 'audience',
     question: 'Who are you trying to serve?',
+    multiSelect: true,
+    subtitle: 'Select one or more audiences.',
     pills: [
       { id: 'consumers', label: 'Consumers' },
       { id: 'small-businesses', label: 'Small businesses' },
@@ -30,6 +34,7 @@ const CHAT_STEPS = [
   {
     id: 'go-to-market',
     question: 'How do you want to go to market?',
+    multiSelect: false,
     pills: [
       { id: 'standalone-brand', label: 'Standalone digital brand' },
       { id: 'endorsed-solution', label: 'FI-endorsed vertical solution' },
@@ -40,6 +45,7 @@ const CHAT_STEPS = [
   {
     id: 'launch-posture',
     question: 'What is your launch posture?',
+    multiSelect: false,
     pills: [
       { id: 'test-learn', label: 'Test and learn' },
       { id: 'fast-launch', label: 'Fast launch' },
@@ -262,7 +268,7 @@ function startChatFlow(initialGoal) {
   chatExpanded = true;
 
   if (initialGoal) {
-    chatSelections['growth-goal'] = initialGoal;
+    chatSelections['growth-goal'] = [initialGoal];
     chatStep = 1;
   }
 
@@ -278,14 +284,37 @@ function expandChatBox() {
 }
 
 function selectChatOption(stepId, optionId) {
-  chatSelections[stepId] = optionId;
-  chatStep++;
+  const step = CHAT_STEPS[chatStep];
 
+  if (step && step.multiSelect) {
+    // Multi-select: toggle the option in an array
+    if (!Array.isArray(chatSelections[stepId])) {
+      chatSelections[stepId] = [];
+    }
+    const idx = chatSelections[stepId].indexOf(optionId);
+    if (idx >= 0) {
+      chatSelections[stepId].splice(idx, 1);
+    } else {
+      chatSelections[stepId].push(optionId);
+    }
+    // Re-render current step (don't advance)
+    updateChatContent();
+  } else {
+    // Single-select: advance immediately
+    chatSelections[stepId] = optionId;
+    chatStep++;
+    if (chatStep >= CHAT_STEPS.length) {
+      chatStep = 4;
+    }
+    updateChatContent();
+  }
+}
+
+function advanceChatStep() {
+  chatStep++;
   if (chatStep >= CHAT_STEPS.length) {
-    // Show results
     chatStep = 4;
   }
-
   updateChatContent();
 }
 
@@ -299,33 +328,73 @@ function updateChatContent() {
   }
 
   if (chatStep === 4) {
-    // Show recommendations
     renderChatResults(responseArea);
     return;
   }
 
   const step = CHAT_STEPS[chatStep];
+  const isMulti = step.multiSelect;
+  const currentSelections = isMulti ? (chatSelections[step.id] || []) : null;
+  const hasSelections = isMulti ? currentSelections.length > 0 : false;
+
   responseArea.innerHTML = `
     <div class="chat-response-inner animate-fadeSlideIn">
       <div class="chat-divider"></div>
-      <div class="chat-step-indicator">Step ${chatStep + 1} of 4</div>
+      <div class="chat-step-indicator">Step ${chatStep + 1} of 4${isMulti ? ' — select multiple' : ''}</div>
       <h2 class="chat-response-heading">${step.question}</h2>
+      ${step.subtitle ? `<p class="chat-response-body" style="margin-bottom: 0.75rem;">${step.subtitle}</p>` : ''}
       <div class="chat-option-pills">
-        ${step.pills.map(p => `
-          <button class="chat-option-pill" onclick="selectChatOption('${step.id}', '${p.id}')">
-            ${p.label}
-          </button>
-        `).join('')}
+        ${step.pills.map(p => {
+          const isSelected = isMulti ? currentSelections.includes(p.id) : false;
+          return `
+            <button class="chat-option-pill ${isSelected ? 'chat-pill-selected' : ''}" onclick="selectChatOption('${step.id}', '${p.id}')">
+              ${isSelected ? '<span class="pill-check">✓</span> ' : ''}${p.label}
+            </button>
+          `;
+        }).join('')}
       </div>
+      ${isMulti ? `
+        <div class="chat-multi-actions">
+          <button class="chat-action-pill chat-action-primary ${!hasSelections ? 'chat-pill-disabled' : ''}" 
+                  onclick="${hasSelections ? 'advanceChatStep()' : ''}" 
+                  ${!hasSelections ? 'disabled' : ''}>
+            Continue
+          </button>
+        </div>
+      ` : ''}
     </div>
   `;
+
+  // Ensure expanded height accommodates content
+  expandChatBox();
 }
 
 function renderChatResults(container) {
-  const growthGoal = chatSelections['growth-goal'] || 'deposits';
-  const recommendedIds = RECOMMENDATION_MAP[growthGoal] || RECOMMENDATION_MAP['deposits'];
-  const recommended = recommendedIds.map(id => CONCEPTS.find(c => c.id === id)).filter(Boolean);
-  const reason = RECOMMENDATION_REASONS[growthGoal] || RECOMMENDATION_REASONS['deposits'];
+  // Support multi-select: merge recommendations from all selected goals
+  const growthGoals = Array.isArray(chatSelections['growth-goal'])
+    ? chatSelections['growth-goal']
+    : [chatSelections['growth-goal'] || 'deposits'];
+
+  // Gather unique concept IDs from all selected goals
+  const seenIds = new Set();
+  const allRecommended = [];
+  for (const goal of growthGoals) {
+    const ids = RECOMMENDATION_MAP[goal] || [];
+    for (const id of ids) {
+      if (!seenIds.has(id)) {
+        seenIds.add(id);
+        const concept = CONCEPTS.find(c => c.id === id);
+        if (concept) allRecommended.push(concept);
+      }
+    }
+  }
+  const recommended = allRecommended.slice(0, 3);
+
+  // Build combined reason
+  const reasons = growthGoals
+    .map(g => RECOMMENDATION_REASONS[g])
+    .filter(Boolean);
+  const reason = reasons[0] || RECOMMENDATION_REASONS['deposits'];
 
   container.innerHTML = `
     <div class="chat-response-inner animate-fadeSlideIn">
@@ -345,8 +414,8 @@ function renderChatResults(container) {
       </div>
       <div class="chat-result-actions">
         <button class="chat-action-pill chat-action-primary" onclick="closeChatBox(); setTimeout(() => navigateTo('browse'), 400)">Browse all concepts</button>
-        <button class="chat-action-pill" onclick="closeChatBox(); setTimeout(() => navigateTo('wizard'), 400)">Refine my path</button>
-        <button class="chat-action-pill chat-action-primary" onclick="openStrategySession()">Request strategy session</button>
+        <button class="chat-action-pill chat-action-primary" onclick="closeChatBox(); setTimeout(() => navigateTo('build-your-own'), 400)">Build your own</button>
+        <button class="chat-action-pill" onclick="openStrategySession()">Request strategy session</button>
       </div>
     </div>
   `;

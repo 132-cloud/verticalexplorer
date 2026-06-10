@@ -1371,6 +1371,301 @@ img {
   margin-bottom: 2rem;
 }
 
+/* --- MULTI-SELECT PILLS --- */
+.chat-pill-selected {
+  background: rgba(0, 101, 255, 0.25) !important;
+  border-color: rgba(0, 101, 255, 0.5) !important;
+  color: #fff !important;
+}
+
+.pill-check {
+  font-size: 0.7rem;
+  margin-right: 0.15rem;
+}
+
+.chat-multi-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.chat-pill-disabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+/* --- CENSUS SECTION --- */
+.census-section {
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(0, 101, 255, 0.08);
+}
+
+.census-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: 0.5rem;
+}
+
+.census-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.census-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.census-select {
+  flex: 1;
+  max-width: 280px;
+  padding: 0.6rem 1rem;
+  background: rgba(17, 35, 67, 0.6);
+  border: 1px solid rgba(0, 101, 255, 0.15);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.census-select:focus {
+  border-color: var(--accent);
+}
+
+.census-select option {
+  background: var(--charcoal);
+  color: var(--text-primary);
+}
+
+.census-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.census-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 101, 255, 0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.census-empty {
+  padding: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.census-data {
+  padding: 0;
+}
+
+.census-geo-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.census-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.census-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: rgba(0, 101, 255, 0.06);
+  border: 1px solid rgba(0, 101, 255, 0.1);
+  border-radius: 4px;
+}
+
+.census-metric-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.census-metric-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.census-secondary {
+  display: flex;
+  gap: 2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 101, 255, 0.06);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.census-source {
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* --- BUILD YOUR OWN PAGE --- */
+.build-your-own-page {
+  padding: 140px 0 80px;
+}
+
+.byo-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.build-your-own-page h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.byo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.byo-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 2rem;
+  transition: var(--transition);
+}
+
+.byo-card:hover {
+  border-color: var(--card-hover-border);
+  transform: translateY(-2px);
+}
+
+.byo-card-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.byo-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.byo-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.byo-examples {
+  margin-bottom: 4rem;
+}
+
+.byo-example-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.byo-example {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.byo-example:hover {
+  border-color: var(--card-hover-border);
+  transform: translateY(-2px);
+}
+
+.byo-example-img {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+}
+
+.byo-example-content {
+  padding: 1.25rem;
+}
+
+.byo-example-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.byo-example-content p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.byo-cta {
+  text-align: center;
+}
+
+.byo-cta-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 3rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.byo-cta-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.byo-cta-card p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.byo-cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 1024px) {
   .concept-grid {

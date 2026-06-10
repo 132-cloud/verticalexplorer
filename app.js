@@ -28,6 +28,7 @@ function navigateTo(page, data) {
       case 'concept': renderConceptDetail(data); break;
       case 'how-it-works': renderHowItWorks(); break;
       case 'strategy-room': renderStrategyRoom(); break;
+      case 'build-your-own': renderBuildYourOwn(); break;
       default: renderHome();
     }
     content.style.opacity = '1';
@@ -97,6 +98,7 @@ function renderHome() {
           <button class="chat-pill" onclick="handleChatPillClick('new-geographies')">New geographies</button>
           <button class="chat-pill" onclick="handleChatPillClick('brand-differentiation')">Differentiation</button>
           <button class="chat-pill chat-pill-cta" onclick="navigateTo('browse')">Browse all concepts</button>
+          <button class="chat-pill chat-pill-cta" onclick="navigateTo('build-your-own')">Build your own</button>
         </div>
       </div>
     </section>
@@ -366,6 +368,8 @@ function renderConceptDetail(conceptId) {
               <h2>Brand Direction</h2>
               <p>${concept.brandDirection}</p>
             </div>
+
+            ${CONCEPT_NAICS[concept.id] ? renderCensusSelector(concept.id) : ''}
           </div>
 
           <div class="concept-sidebar">
@@ -409,6 +413,11 @@ function renderConceptDetail(conceptId) {
       </div>
     </section>
   `;
+
+  // Auto-load census data if available for this concept
+  if (CONCEPT_NAICS[concept.id]) {
+    requestAnimationFrame(() => loadCensusData(concept.id));
+  }
 }
 
 // ============================================================
@@ -472,6 +481,86 @@ function renderStrategyRoom() {
           <div class="empty-actions">
             <button class="btn btn-primary" onclick="navigateTo('wizard')">Choose Growth Path</button>
             <button class="btn btn-secondary" onclick="navigateTo('browse')">Browse Concepts</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+// ============================================================
+// BUILD YOUR OWN PAGE
+// ============================================================
+
+function renderBuildYourOwn() {
+  const content = document.getElementById('appContent');
+  content.innerHTML = `
+    <section class="build-your-own-page">
+      <div class="container">
+        <div class="byo-header">
+          <h1>Build Your Own Vertical</h1>
+          <p class="page-subtitle">Don't see exactly what you need? Work directly with Nymbus Labs to design, validate, and launch a custom vertical banking concept built around your institution's unique opportunity.</p>
+        </div>
+
+        <div class="byo-grid">
+          <div class="byo-card">
+            <div class="byo-card-number">01</div>
+            <h3>Discovery & Strategy</h3>
+            <p>We'll collaborate to identify your target audience, define the market opportunity, and align on a growth thesis that fits your institution's goals.</p>
+          </div>
+          <div class="byo-card">
+            <div class="byo-card-number">02</div>
+            <h3>Concept Design</h3>
+            <p>Our team builds the brand direction, product hooks, feature set, and go-to-market model — purpose-built around your audience and objectives.</p>
+          </div>
+          <div class="byo-card">
+            <div class="byo-card-number">03</div>
+            <h3>Validate & Size</h3>
+            <p>Using proprietary research and census data, we quantify the opportunity, validate market fit, and build the business case for internal stakeholders.</p>
+          </div>
+          <div class="byo-card">
+            <div class="byo-card-number">04</div>
+            <h3>Launch on Nymbus</h3>
+            <p>Deploy on the Nymbus platform with core processing, digital banking, account opening, and managed operations connected from day one.</p>
+          </div>
+        </div>
+
+        <div class="byo-examples">
+          <h2 class="section-title" style="text-align: left; margin-bottom: 1rem;">Custom concepts we've built with partners</h2>
+          <p class="section-subtitle" style="text-align: left; margin-bottom: 2rem;">These verticals started as conversations and became differentiated banking experiences.</p>
+          <div class="byo-example-grid">
+            <div class="byo-example">
+              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=250&fit=crop')"></div>
+              <div class="byo-example-content">
+                <h4>Cannabis Banking</h4>
+                <p>Custom compliance-first banking for licensed cannabis operators in states with legal frameworks.</p>
+              </div>
+            </div>
+            <div class="byo-example">
+              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=250&fit=crop')"></div>
+              <div class="byo-example-content">
+                <h4>Creator Economy Banking</h4>
+                <p>Purpose-built financial tools for content creators managing brand deals, royalties, and multi-platform income.</p>
+              </div>
+            </div>
+            <div class="byo-example">
+              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop')"></div>
+              <div class="byo-example-content">
+                <h4>Professional Services Banking</h4>
+                <p>Specialized banking for law firms, accounting practices, and consulting firms with trust account management.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="byo-cta">
+          <div class="byo-cta-card">
+            <h2>Ready to build something new?</h2>
+            <p>Talk to Nymbus Labs about designing a custom vertical banking concept for your institution.</p>
+            <div class="byo-cta-actions">
+              <button class="btn btn-primary btn-lg" onclick="openStrategySession()">Talk to Labs</button>
+              <button class="btn btn-secondary btn-lg" onclick="navigateTo('browse')">Browse existing concepts</button>
+            </div>
           </div>
         </div>
       </div>
