@@ -52,14 +52,51 @@ function closeMobileNav() {
 function renderHome() {
   const content = document.getElementById('appContent');
   content.innerHTML = `
-    <section class="hero">
-      <div class="hero-bg"></div>
-      <div class="hero-content">
-        <h1 class="hero-headline">Explore vertical banking strategies built around your growth goals.</h1>
-        <p class="hero-subhead">Discover ready-to-grow vertical banking concepts designed to help financial institutions enter new markets, deepen relationships, and launch differentiated digital experiences.</p>
-        <div class="hero-ctas">
-          <button class="btn btn-primary btn-lg" onclick="navigateTo('wizard')">Choose Your Growth Path</button>
-          <button class="btn btn-secondary btn-lg" onclick="navigateTo('browse')">Browse All Concepts</button>
+    <section class="chat-hero">
+      <canvas class="chat-hero-canvas" id="shaderCanvas"></canvas>
+      <div class="chat-hero-grain"></div>
+      <div class="chat-hero-fade"></div>
+
+      <div class="chat-hero-content">
+        <h1 class="chat-hero-headline">Explore vertical banking strategies<br>built around your growth goals.</h1>
+        <p class="chat-hero-subquestion">What do you want to grow?</p>
+
+        <!-- Prompt Box -->
+        <div class="chat-prompt-wrapper">
+          <div class="chat-prompt-box" id="chatPromptBox">
+            <form class="chat-input-row" onsubmit="handleChatInput(event)">
+              <div class="chat-input-container">
+                <input
+                  type="text"
+                  id="chatInput"
+                  class="chat-input"
+                  autocomplete="off"
+                  onfocus="this.parentElement.querySelector('.chat-placeholder').style.display='none'"
+                  onblur="if(!this.value) this.parentElement.querySelector('.chat-placeholder').style.display=''"
+                />
+                <span class="chat-placeholder" id="chatPlaceholder">${CHAT_PLACEHOLDERS[0]}</span>
+              </div>
+              <button type="submit" class="chat-submit-btn" aria-label="Submit">
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 16V4M10 4L5 9M10 4L15 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </form>
+
+            <!-- Expanded response area -->
+            <div id="chatResponse"></div>
+          </div>
+        </div>
+
+        <!-- Pill Buttons -->
+        <div class="chat-pills" id="chatPills">
+          <button class="chat-pill" onclick="handleChatPillClick('deposits')">Grow deposits</button>
+          <button class="chat-pill" onclick="handleChatPillClick('fee-income')">Fee income</button>
+          <button class="chat-pill" onclick="handleChatPillClick('smb-relationships')">SMB relationships</button>
+          <button class="chat-pill" onclick="handleChatPillClick('younger-consumers')">Younger consumers</button>
+          <button class="chat-pill" onclick="handleChatPillClick('new-geographies')">New geographies</button>
+          <button class="chat-pill" onclick="handleChatPillClick('brand-differentiation')">Differentiation</button>
+          <button class="chat-pill chat-pill-cta" onclick="navigateTo('browse')">Browse all concepts</button>
         </div>
       </div>
     </section>
@@ -98,6 +135,13 @@ function renderHome() {
       </div>
     </section>
   `;
+
+  // Initialize shader after DOM is ready
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById('shaderCanvas');
+    if (canvas) initShaderBackground(canvas);
+    initChatHero();
+  });
 }
 
 // ============================================================
