@@ -213,31 +213,37 @@ function processCensusResults(results, naicsConfig, isNational, stateFips) {
 // UI RENDERING
 // ============================================================
 
-function renderCensusSelector(conceptId) {
+function getSelectedGeo() {
+  // Check if user selected a geography in the chat wizard
+  return chatSelections && chatSelections['geography'] ? chatSelections['geography'] : 'national';
+}
+
+function renderCensusSidebar(conceptId) {
+  const selectedGeo = getSelectedGeo();
   return `
-    <div class="census-section" id="censusSection">
-      <div class="census-header">
-        <h2>Market Opportunity</h2>
-        <p>Live data from the U.S. Census Bureau showing the size of this vertical in your target market.</p>
-      </div>
-      <div class="census-controls">
-        <select class="census-select" id="censusGeoSelect" onchange="loadCensusData('${conceptId}')">
-          <option value="national">National (all states)</option>
-          ${US_STATES.map(s => `<option value="${s.fips}">${s.name}</option>`).join('')}
+    <div class="sidebar-card census-sidebar-card" id="censusSection">
+      <h3>Market Opportunity</h3>
+      <p class="census-sidebar-desc">U.S. Census Bureau data for this vertical.</p>
+      <div class="census-controls-sidebar">
+        <select class="census-select-sidebar" id="censusGeoSelect" onchange="loadCensusData('${conceptId}')">
+          <option value="national" ${selectedGeo === 'national' ? 'selected' : ''}>National</option>
+          ${US_STATES.map(s => `<option value="${s.fips}" ${selectedGeo === s.fips ? 'selected' : ''}>${s.name}</option>`).join('')}
         </select>
-        <button class="btn btn-sm btn-primary" onclick="loadCensusData('${conceptId}')">Update</button>
       </div>
-      <div class="census-results" id="censusResults">
+      <div id="censusResults">
         <div class="census-loading">
           <div class="census-spinner"></div>
-          <span>Loading market data...</span>
+          <span>Loading...</span>
         </div>
       </div>
-      <div class="census-source">
-        Source: U.S. Census Bureau, County Business Patterns & Nonemployer Statistics (2023)
-      </div>
+      <div class="census-source">Source: U.S. Census Bureau, CBP & Nonemployer Statistics (2023)</div>
     </div>
   `;
+}
+
+// Keep old function name for backward compat but redirect
+function renderCensusSelector(conceptId) {
+  return renderCensusSidebar(conceptId);
 }
 
 async function loadCensusData(conceptId) {
@@ -268,7 +274,7 @@ async function loadCensusData(conceptId) {
   resultsEl.innerHTML = `
     <div class="census-data animate-fadeSlideIn">
       <div class="census-geo-label">${data.geoName} — ${data.industry}</div>
-      <div class="census-metrics">
+      <div class="census-metrics census-metrics-sidebar">
         <div class="census-metric">
           <span class="census-metric-value">${formatNumber(data.totalBusinesses)}</span>
           <span class="census-metric-label">Total Businesses</span>
@@ -288,8 +294,8 @@ async function loadCensusData(conceptId) {
       </div>
       ${data.totalEmployment > 0 ? `
         <div class="census-secondary">
-          <span>${formatNumber(data.totalEmployment)} total employed</span>
-          <span>$${formatNumber(data.annualPayroll)}K annual payroll</span>
+          <span>${formatNumber(data.totalEmployment)} employed</span>
+          <span>$${formatNumber(data.annualPayroll)}K payroll</span>
         </div>
       ` : ''}
     </div>

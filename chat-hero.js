@@ -52,6 +52,14 @@ const CHAT_STEPS = [
       { id: 'strategic-expansion', label: 'Strategic expansion' },
       { id: 'fully-differentiated', label: 'Fully differentiated brand' }
     ]
+  },
+  {
+    id: 'geography',
+    question: 'Where do you want to grow?',
+    subtitle: 'Select a market for opportunity sizing.',
+    multiSelect: false,
+    isGeoStep: true,
+    pills: []
   }
 ];
 
@@ -65,13 +73,13 @@ const CHAT_PLACEHOLDERS = [
 ];
 
 // Chat state
-let chatStep = -1; // -1 = idle, 0-3 = steps, 4 = results
+let chatStep = -1;
 let chatSelections = {};
 let chatExpanded = false;
 let chatClosing = false;
 let placeholderIndex = 0;
 let placeholderTimer = null;
-let placeholderAnimState = 'visible';
+let geoFilterText = '';
 
 // ============================================================
 // INITIALIZATION
@@ -109,25 +117,21 @@ function initShaderBackground(canvas) {
       float y = uv.y;
       vec3 col;
 
-      // Base gradient: deep navy → blue → subtle light at bottom
       col = vec3(0.0);
       col = mix(col, vec3(0.0, 0.04, 0.16), smoothstep(0.95, 0.7, y));
       col = mix(col, vec3(0.0, 0.12, 0.45), smoothstep(0.75, 0.5, y));
       col = mix(col, vec3(0.0, 0.25, 0.7), smoothstep(0.55, 0.35, y));
 
-      // Bottom arc glow
       float arcDist = length((uv - vec2(0.5, -0.5)) * vec2(0.5, 1.0));
       float arc = smoothstep(1.0, 0.3, arcDist);
       float bottomGlow = smoothstep(0.4, 0.0, y);
       col = mix(col, vec3(0.0, 0.35, 0.9), bottomGlow * arc * 0.6);
 
-      // Mouse glow
       vec2 glowCenter = vec2(mouse.x, 1.0 - mouse.y);
       float glowDist = length((uv - glowCenter) * vec2(1.4, 1.0));
       float glow = exp(-glowDist * 3.5) * 0.25;
       col += vec3(0.0, 0.25, 1.0) * glow;
 
-      // Subtle wave
       float wave = sin(uv.x * 5.0 + u_time * 0.4 + mouse.x * 2.0) * 0.015;
       wave += sin(uv.x * 3.0 - u_time * 0.25) * 0.01;
       float waveMask = smoothstep(0.3, 0.8, 1.0 - uv.y);
@@ -205,7 +209,6 @@ function startPlaceholderRotation() {
     const el = document.getElementById('chatPlaceholder');
     if (!el) return;
 
-    // Slide out
     el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
     el.style.opacity = '0';
     el.style.transform = 'translateY(-12px)';
@@ -254,6 +257,7 @@ function closeChatBox() {
     chatSelections = {};
     chatExpanded = false;
     chatClosing = false;
+    geoFilterText = '';
     updateChatContent();
   }, 350);
 }
@@ -266,6 +270,7 @@ function startChatFlow(initialGoal) {
   chatStep = 0;
   chatSelections = {};
   chatExpanded = true;
+  geoFilterText = '';
 
   if (initialGoal) {
     chatSelections['growth-goal'] = [initialGoal];
@@ -279,7 +284,7 @@ function startChatFlow(initialGoal) {
 function expandChatBox() {
   const box = document.getElementById('chatPromptBox');
   if (box) {
-    box.style.maxHeight = '500px';
+    box.style.maxHeight = '600px';
   }
 }
 
@@ -297,23 +302,52 @@ function selectChatOption(stepId, optionId) {
     } else {
       chatSelections[stepId].push(optionId);
     }
-    // Re-render current step (don't advance)
-    updateChatContent();
+    // Update pills in-place without full re-render (prevents blink)
+    updatePillStates(step);
   } else {
     // Single-select: advance immediately
     chatSelections[stepId] = optionId;
     chatStep++;
     if (chatStep >= CHAT_STEPS.length) {
-      chatStep = 4;
+      chatStep = CHAT_STEPS.length;
     }
     updateChatContent();
+  }
+}
+
+// Update pill selected states and continue button without re-rendering
+function updatePillStates(step) {
+  const selections = chatSelections[step.id] || [];
+
+  // Update each pill button
+  document.querySelectorAll('#chatResponse .chat-option-pill').forEach(btn => {
+    const id = btn.dataset.pillId;
+    const selected = selections.includes(id);
+    btn.classList.toggle('chat-pill-selected', selected);
+    btn.dataset.selected = selected ? '1' : '0';
+
+    // Update inner content
+    const label = step.pills.find(p => p.id === id)?.label || '';
+    btn.innerHTML = selected ? `<span class="pill-check">✓</span> ${label}` : label;
+  });
+
+  // Update continue button
+  const continueBtn = document.getElementById('chatContinueBtn');
+  if (continueBtn) {
+    if (selections.length > 0) {
+      continueBtn.classList.remove('chat-pill-disabled');
+      continueBtn.disabled = false;
+    } else {
+      continueBtn.classList.add('chat-pill-disabled');
+      continueBtn.disabled = true;
+    }
   }
 }
 
 function advanceChatStep() {
   chatStep++;
   if (chatStep >= CHAT_STEPS.length) {
-    chatStep = 4;
+    chatStep = CHAT_STEPS.length;
   }
   updateChatContent();
 }
@@ -327,7 +361,7 @@ function updateChatContent() {
     return;
   }
 
-  if (chatStep === 4) {
+  if (chatStep >= CHAT_STEPS.length) {
     renderChatResults(responseArea);
     return;
   }
@@ -336,18 +370,28 @@ function updateChatContent() {
   const isMulti = step.multiSelect;
   const currentSelections = isMulti ? (chatSelections[step.id] || []) : null;
   const hasSelections = isMulti ? currentSelections.length > 0 : false;
+  const totalSteps = CHAT_STEPS.length;
+
+  // Geo step gets a special render with type-to-search
+  if (step.isGeoStep) {
+    renderGeoStep(responseArea, step, totalSteps);
+    expandChatBox();
+    return;
+  }
 
   responseArea.innerHTML = `
     <div class="chat-response-inner animate-fadeSlideIn">
       <div class="chat-divider"></div>
-      <div class="chat-step-indicator">Step ${chatStep + 1} of 4${isMulti ? ' — select multiple' : ''}</div>
+      <div class="chat-step-indicator">Step ${chatStep + 1} of ${totalSteps}${isMulti ? ' — select multiple' : ''}</div>
       <h2 class="chat-response-heading">${step.question}</h2>
       ${step.subtitle ? `<p class="chat-response-body" style="margin-bottom: 0.75rem;">${step.subtitle}</p>` : ''}
       <div class="chat-option-pills">
         ${step.pills.map(p => {
           const isSelected = isMulti ? currentSelections.includes(p.id) : false;
           return `
-            <button class="chat-option-pill ${isSelected ? 'chat-pill-selected' : ''}" onclick="selectChatOption('${step.id}', '${p.id}')">
+            <button class="chat-option-pill ${isSelected ? 'chat-pill-selected' : ''}" 
+                    data-pill-id="${p.id}" 
+                    onclick="selectChatOption('${step.id}', '${p.id}')">
               ${isSelected ? '<span class="pill-check">✓</span> ' : ''}${p.label}
             </button>
           `;
@@ -355,8 +399,9 @@ function updateChatContent() {
       </div>
       ${isMulti ? `
         <div class="chat-multi-actions">
-          <button class="chat-action-pill chat-action-primary ${!hasSelections ? 'chat-pill-disabled' : ''}" 
-                  onclick="${hasSelections ? 'advanceChatStep()' : ''}" 
+          <button id="chatContinueBtn" 
+                  class="chat-action-pill chat-action-primary chat-multi-continue ${!hasSelections ? 'chat-pill-disabled' : ''}" 
+                  onclick="advanceChatStep()" 
                   ${!hasSelections ? 'disabled' : ''}>
             Continue
           </button>
@@ -365,17 +410,91 @@ function updateChatContent() {
     </div>
   `;
 
-  // Ensure expanded height accommodates content
   expandChatBox();
 }
 
+// ============================================================
+// GEOGRAPHY STEP - Type-to-search state picker
+// ============================================================
+
+function renderGeoStep(container, step, totalSteps) {
+  const allGeos = [
+    { id: 'national', label: 'National (all states)' },
+    ...US_STATES.map(s => ({ id: s.fips, label: s.name }))
+  ];
+
+  const filtered = geoFilterText
+    ? allGeos.filter(g => g.label.toLowerCase().includes(geoFilterText.toLowerCase()))
+    : allGeos.slice(0, 12);
+
+  container.innerHTML = `
+    <div class="chat-response-inner animate-fadeSlideIn">
+      <div class="chat-divider"></div>
+      <div class="chat-step-indicator">Step ${chatStep + 1} of ${totalSteps}</div>
+      <h2 class="chat-response-heading">${step.question}</h2>
+      <p class="chat-response-body" style="margin-bottom: 0.75rem;">${step.subtitle}</p>
+      <div class="chat-geo-search">
+        <input type="text" 
+               class="chat-geo-input" 
+               placeholder="Type a state name..." 
+               value="${geoFilterText}"
+               oninput="handleGeoFilter(this.value)"
+               id="geoSearchInput" />
+      </div>
+      <div class="chat-option-pills" id="geoPillsList">
+        ${filtered.map(g => `
+          <button class="chat-option-pill" onclick="selectGeoOption('${g.id}')">
+            ${g.label}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Focus the search input
+  requestAnimationFrame(() => {
+    const input = document.getElementById('geoSearchInput');
+    if (input) input.focus();
+  });
+}
+
+function handleGeoFilter(value) {
+  geoFilterText = value;
+  const allGeos = [
+    { id: 'national', label: 'National (all states)' },
+    ...US_STATES.map(s => ({ id: s.fips, label: s.name }))
+  ];
+
+  const filtered = geoFilterText
+    ? allGeos.filter(g => g.label.toLowerCase().includes(geoFilterText.toLowerCase()))
+    : allGeos.slice(0, 12);
+
+  const pillsList = document.getElementById('geoPillsList');
+  if (pillsList) {
+    pillsList.innerHTML = filtered.map(g => `
+      <button class="chat-option-pill" onclick="selectGeoOption('${g.id}')">
+        ${g.label}
+      </button>
+    `).join('');
+  }
+}
+
+function selectGeoOption(geoId) {
+  chatSelections['geography'] = geoId;
+  geoFilterText = '';
+  chatStep = CHAT_STEPS.length;
+  updateChatContent();
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+
 function renderChatResults(container) {
-  // Support multi-select: merge recommendations from all selected goals
   const growthGoals = Array.isArray(chatSelections['growth-goal'])
     ? chatSelections['growth-goal']
     : [chatSelections['growth-goal'] || 'deposits'];
 
-  // Gather unique concept IDs from all selected goals
   const seenIds = new Set();
   const allRecommended = [];
   for (const goal of growthGoals) {
@@ -390,17 +509,18 @@ function renderChatResults(container) {
   }
   const recommended = allRecommended.slice(0, 3);
 
-  // Build combined reason
-  const reasons = growthGoals
-    .map(g => RECOMMENDATION_REASONS[g])
-    .filter(Boolean);
+  const reasons = growthGoals.map(g => RECOMMENDATION_REASONS[g]).filter(Boolean);
   const reason = reasons[0] || RECOMMENDATION_REASONS['deposits'];
+
+  const geoId = chatSelections['geography'] || 'national';
+  const geoState = US_STATES.find(s => s.fips === geoId);
+  const geoLabel = geoId === 'national' ? 'nationally' : (geoState ? geoState.name : 'nationally');
 
   container.innerHTML = `
     <div class="chat-response-inner animate-fadeSlideIn">
       <div class="chat-divider"></div>
       <h2 class="chat-response-heading">Here are your recommended vertical concepts.</h2>
-      <p class="chat-response-body">${reason}</p>
+      <p class="chat-response-body">${reason} Market data sized for <strong>${geoLabel}</strong>.</p>
       <div class="chat-result-cards">
         ${recommended.map(c => `
           <div class="chat-result-card" onclick="closeChatBox(); setTimeout(() => navigateTo('concept', '${c.id}'), 400)">
@@ -431,13 +551,11 @@ function handleChatInput(e) {
   const value = input.value.trim().toLowerCase();
   if (!value) return;
 
-  // Match input to growth goals
   const goalMatch = matchInputToGoal(value);
   if (goalMatch) {
     startChatFlow(goalMatch);
     input.value = '';
   } else {
-    // Start from step 1 with no pre-selection
     startChatFlow(null);
     input.value = '';
   }

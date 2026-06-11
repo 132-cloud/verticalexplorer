@@ -368,11 +368,11 @@ function renderConceptDetail(conceptId) {
               <h2>Brand Direction</h2>
               <p>${concept.brandDirection}</p>
             </div>
-
-            ${CONCEPT_NAICS[concept.id] ? renderCensusSelector(concept.id) : ''}
           </div>
 
           <div class="concept-sidebar">
+            ${CONCEPT_NAICS[concept.id] ? renderCensusSidebar(concept.id) : ''}
+
             <div class="sidebar-card">
               <h3>Quick Facts</h3>
               <div class="sidebar-facts">

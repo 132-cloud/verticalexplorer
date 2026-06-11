@@ -1394,54 +1394,75 @@ img {
   cursor: not-allowed !important;
 }
 
-/* --- CENSUS SECTION --- */
-.census-section {
-  margin-top: 2.5rem;
-  padding-top: 2.5rem;
-  border-top: 1px solid rgba(0, 101, 255, 0.08);
+/* --- GEO SEARCH INPUT --- */
+.chat-geo-search {
+  margin-bottom: 0.75rem;
 }
 
-.census-header h2 {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: var(--accent-light);
-  margin-bottom: 0.5rem;
+.chat-geo-input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  color: #fff;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
-.census-header p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 1.25rem;
+.chat-geo-input:focus {
+  border-color: rgba(0, 101, 255, 0.5);
 }
 
-.census-controls {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
+.chat-geo-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- CENSUS SECTION (SIDEBAR) --- */
+.census-sidebar-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
-.census-select {
-  flex: 1;
-  max-width: 280px;
-  padding: 0.6rem 1rem;
+.census-sidebar-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.census-sidebar-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.census-controls-sidebar {
+  margin-bottom: 1rem;
+}
+
+.census-select-sidebar {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
   background: rgba(17, 35, 67, 0.6);
   border: 1px solid rgba(0, 101, 255, 0.15);
   border-radius: 4px;
   color: var(--text-primary);
   font-family: var(--font);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   outline: none;
   cursor: pointer;
 }
 
-.census-select:focus {
+.census-select-sidebar:focus {
   border-color: var(--accent);
 }
 
-.census-select option {
+.census-select-sidebar option {
   background: var(--charcoal);
   color: var(--text-primary);
 }
@@ -1489,29 +1510,33 @@ img {
 
 .census-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.census-metrics-sidebar {
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .census-metric {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 1rem;
+  gap: 0.2rem;
+  padding: 0.75rem;
   background: rgba(0, 101, 255, 0.06);
   border: 1px solid rgba(0, 101, 255, 0.1);
   border-radius: 4px;
 }
 
 .census-metric-value {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: #fff;
 }
 
 .census-metric-label {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -1520,18 +1545,18 @@ img {
 
 .census-secondary {
   display: flex;
-  gap: 2rem;
-  padding-top: 0.75rem;
+  gap: 1rem;
+  padding-top: 0.5rem;
   border-top: 1px solid rgba(0, 101, 255, 0.06);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
 }
 
 .census-source {
-  margin-top: 1rem;
-  font-size: 0.7rem;
+  margin-top: 0.75rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 /* --- BUILD YOUR OWN PAGE --- */
