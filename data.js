@@ -343,6 +343,5 @@ const BROWSE_CATEGORIES = [
   { title: 'SMB Growth Concepts', filter: (c) => c.tags.some(t => t.toLowerCase().includes('smb')) },
   { title: 'Consumer Affinity Concepts', filter: (c) => c.tags.some(t => t.toLowerCase().includes('consumer') || t.toLowerCase().includes('affinity')) },
   { title: 'Fastest to Launch', filter: (c) => parseInt(c.launchTime) <= 4 },
-  { title: 'Best for Existing Customers', filter: (c) => c.tags.some(t => t.toLowerCase().includes('endorsed') || t.toLowerCase().includes('product line')) },
   { title: 'Best for New Market Expansion', filter: (c) => c.tags.some(t => t.toLowerCase().includes('standalone')) }
 ];

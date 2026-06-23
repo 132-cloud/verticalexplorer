@@ -497,6 +497,17 @@ function renderChatResults(container) {
 
   const seenIds = new Set();
   const allRecommended = [];
+
+  // If there's a vertical match from user input, prioritize it
+  const verticalMatch = chatSelections['_verticalMatch'];
+  if (verticalMatch) {
+    const matchedConcept = CONCEPTS.find(c => c.id === verticalMatch);
+    if (matchedConcept && !seenIds.has(matchedConcept.id)) {
+      seenIds.add(matchedConcept.id);
+      allRecommended.push(matchedConcept);
+    }
+  }
+
   for (const goal of growthGoals) {
     const ids = RECOMMENDATION_MAP[goal] || [];
     for (const id of ids) {
@@ -551,9 +562,20 @@ function handleChatInput(e) {
   const value = input.value.trim().toLowerCase();
   if (!value) return;
 
+  // Check if the input matches a vertical/concept in the library
+  const verticalMatch = matchInputToVertical(value);
+
   const goalMatch = matchInputToGoal(value);
   if (goalMatch) {
+    if (verticalMatch) {
+      chatSelections['_verticalMatch'] = verticalMatch;
+    }
     startChatFlow(goalMatch);
+    input.value = '';
+  } else if (verticalMatch) {
+    // No goal matched but a vertical did — skip straight to results with that vertical
+    chatSelections['_verticalMatch'] = verticalMatch;
+    startChatFlow(null);
     input.value = '';
   } else {
     startChatFlow(null);
@@ -574,6 +596,27 @@ function matchInputToGoal(input) {
 
   for (const [goal, keys] of Object.entries(keywords)) {
     if (keys.some(k => lower.includes(k))) return goal;
+  }
+  return null;
+}
+
+function matchInputToVertical(input) {
+  const lower = input.toLowerCase().trim();
+  // Try to match input text against concept names, tags, audience, and key terms
+  const verticalKeywords = {
+    'contractor-banking': ['contractor', 'construction', 'trades', 'plumber', 'electrician', 'hvac', 'plumbing'],
+    'healthcare-worker-banking': ['healthcare', 'nurse', 'nursing', 'medical', 'health care', 'therapist'],
+    'nonprofit-banking': ['nonprofit', 'non-profit', 'foundation', 'charity', 'mission-driven'],
+    'local-smb-banking': ['local business', 'main street', 'retail shop', 'restaurant'],
+    'student-athlete-banking': ['student athlete', 'nil', 'college athlete', 'athlete'],
+    'agricultural-banking': ['agriculture', 'agricultural', 'farming', 'farmer', 'ranch', 'agribusiness'],
+    'gig-economy-banking': ['gig', 'freelance', 'freelancer', 'rideshare', 'delivery', 'creator'],
+    'military-family-banking': ['military', 'veteran', 'armed forces', 'service member'],
+    'creative-professional-banking': ['creative', 'artist', 'musician', 'designer', 'photographer', 'filmmaker']
+  };
+
+  for (const [conceptId, keys] of Object.entries(verticalKeywords)) {
+    if (keys.some(k => lower.includes(k))) return conceptId;
   }
   return null;
 }

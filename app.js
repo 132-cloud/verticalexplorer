@@ -396,7 +396,7 @@ function renderConceptDetail(conceptId) {
             </div>
 
             <div class="sidebar-actions">
-              <button class="btn btn-primary btn-full" onclick="addToStrategyRoom()">Add to Strategy Room</button>
+              <button class="btn btn-primary btn-full" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
               <button class="btn btn-secondary btn-full" onclick="openStrategySession()">Explore with Nymbus</button>
             </div>
           </div>
@@ -446,7 +446,7 @@ function renderHowItWorks() {
           <div class="step-card">
             <div class="step-number">03</div>
             <h3>Design & Validate</h3>
-            <p>Work with Nymbus strategists to refine your chosen concept, validate market fit, and design the product experience.</p>
+            <p>Work with Labs experts to refine your chosen concept, validate market fit, and design the product experience.</p>
           </div>
           <div class="step-card">
             <div class="step-number">04</div>
@@ -469,23 +469,70 @@ function renderHowItWorks() {
 
 function renderStrategyRoom() {
   const content = document.getElementById('appContent');
-  content.innerHTML = `
-    <section class="strategy-room-page">
-      <div class="container">
-        <h1>Strategy Room</h1>
-        <p class="page-subtitle">Your collaborative workspace for evaluating and prioritizing vertical banking concepts.</p>
+  const savedConcepts = strategyRoomConcepts
+    .map(id => CONCEPTS.find(c => c.id === id))
+    .filter(Boolean);
 
-        <div class="empty-state">
-          <h2>No concepts added yet</h2>
-          <p>Browse concepts and add them to your Strategy Room to compare options, collaborate with your team, and build your vertical banking roadmap.</p>
-          <div class="empty-actions">
-            <button class="btn btn-primary" onclick="navigateTo('wizard')">Choose Growth Path</button>
-            <button class="btn btn-secondary" onclick="navigateTo('browse')">Browse Concepts</button>
+  if (savedConcepts.length === 0) {
+    content.innerHTML = `
+      <section class="strategy-room-page">
+        <div class="container">
+          <h1>Strategy Room</h1>
+          <p class="page-subtitle">Your collaborative workspace for evaluating and prioritizing vertical banking concepts.</p>
+
+          <div class="empty-state">
+            <h2>No concepts added yet</h2>
+            <p>Browse concepts and add them to your Strategy Room to compare options, collaborate with your team, and build your vertical banking roadmap.</p>
+            <div class="empty-actions">
+              <button class="btn btn-primary" onclick="navigateTo('wizard')">Choose Growth Path</button>
+              <button class="btn btn-secondary" onclick="navigateTo('browse')">Browse Concepts</button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  `;
+      </section>
+    `;
+  } else {
+    content.innerHTML = `
+      <section class="strategy-room-page">
+        <div class="container">
+          <h1>Strategy Room</h1>
+          <p class="page-subtitle">Your collaborative workspace for evaluating and prioritizing vertical banking concepts.</p>
+
+          <div class="strategy-room-grid results-grid">
+            ${savedConcepts.map(c => `
+              <div class="concept-card">
+                <div class="card-image" style="background-image: url('${c.image}')">
+                  <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                  <h3 class="card-title">${c.name}</h3>
+                  <p class="card-desc">${c.shortDesc}</p>
+                  <div class="card-tags">
+                    ${c.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                  </div>
+                  <div class="card-actions">
+                    <button class="btn btn-sm btn-primary" onclick="navigateTo('concept', '${c.id}')">View Concept</button>
+                    <button class="btn btn-sm btn-secondary" onclick="removeFromStrategyRoom('${c.id}')">Remove</button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="results-actions" style="margin-top: 2rem;">
+            <button class="btn btn-secondary" onclick="navigateTo('browse')">Browse More Concepts</button>
+            <button class="btn btn-primary" onclick="openStrategySession()">Request Strategy Session</button>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+}
+
+function removeFromStrategyRoom(conceptId) {
+  strategyRoomConcepts = strategyRoomConcepts.filter(id => id !== conceptId);
+  localStorage.setItem('strategyRoomConcepts', JSON.stringify(strategyRoomConcepts));
+  renderStrategyRoom();
 }
 
 // ============================================================
@@ -587,7 +634,7 @@ function renderConceptCard(concept, showActions = false) {
         ${showActions ? `
           <div class="card-actions" onclick="event.stopPropagation()">
             <button class="btn btn-sm btn-primary" onclick="navigateTo('concept', '${concept.id}')">View Concept</button>
-            <button class="btn btn-sm btn-secondary" onclick="addToStrategyRoom()">Add to Strategy Room</button>
+            <button class="btn btn-sm btn-secondary" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
           </div>
         ` : ''}
       </div>
@@ -599,8 +646,36 @@ function renderConceptCard(concept, showActions = false) {
 // MODAL & ACTIONS
 // ============================================================
 
-function addToStrategyRoom() {
-  document.getElementById('strategyModal').classList.add('active');
+// Strategy Room storage
+let strategyRoomConcepts = JSON.parse(localStorage.getItem('strategyRoomConcepts') || '[]');
+
+function addToStrategyRoom(conceptId) {
+  // If no conceptId passed, try to get from current page URL/context
+  if (!conceptId) {
+    const heroEl = document.querySelector('.concept-detail');
+    if (heroEl) {
+      const nameEl = heroEl.querySelector('.concept-hero-content h1');
+      if (nameEl) {
+        const concept = CONCEPTS.find(c => c.name === nameEl.textContent);
+        if (concept) conceptId = concept.id;
+      }
+    }
+  }
+
+  if (!conceptId) return;
+
+  // Avoid duplicates
+  if (!strategyRoomConcepts.includes(conceptId)) {
+    strategyRoomConcepts.push(conceptId);
+    localStorage.setItem('strategyRoomConcepts', JSON.stringify(strategyRoomConcepts));
+  }
+
+  // Show confirmation modal
+  const concept = CONCEPTS.find(c => c.id === conceptId);
+  const modal = document.getElementById('strategyModal');
+  modal.querySelector('h2').textContent = 'Added to Strategy Room';
+  modal.querySelector('p').textContent = `"${concept ? concept.name : 'Concept'}" has been added to your Strategy Room. You can compare and evaluate your selected concepts there.`;
+  modal.classList.add('active');
 }
 
 function closeModal() {
