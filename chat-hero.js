@@ -495,29 +495,79 @@ function renderChatResults(container) {
     ? chatSelections['growth-goal']
     : [chatSelections['growth-goal'] || 'deposits'];
 
+  const audienceSelections = Array.isArray(chatSelections['audience'])
+    ? chatSelections['audience']
+    : chatSelections['audience'] ? [chatSelections['audience']] : [];
+
+  const gtmSelection = chatSelections['go-to-market'] || '';
+  const postureSelection = chatSelections['launch-posture'] || '';
+
+  // Score every concept based on all wizard selections
+  const scored = CONCEPTS.map(concept => {
+    let score = 0;
+    const cTags = concept.tags.map(t => t.toLowerCase()).join(' ');
+    const cGrowth = (concept.growthObjective || '').toLowerCase();
+    const cAudience = (concept.audienceType || '').toLowerCase();
+    const cModel = (concept.launchModel || '').toLowerCase();
+    const cLaunch = (concept.launchTime || '').toLowerCase();
+
+    // Growth goal matching (strongest signal)
+    for (const goal of growthGoals) {
+      if (goal === 'deposits' && (cGrowth.includes('deposit') || cTags.includes('deposit'))) score += 3;
+      if (goal === 'fee-income' && (cGrowth.includes('fee') || cTags.includes('fee income'))) score += 3;
+      if (goal === 'lending' && (cGrowth.includes('lending') || cGrowth.includes('finance') || cTags.includes('lending'))) score += 3;
+      if (goal === 'smb-relationships' && (cAudience.includes('smb') || cTags.includes('smb'))) score += 3;
+      if (goal === 'younger-consumers' && (cGrowth.includes('younger') || cTags.includes('younger consumers'))) score += 3;
+      if (goal === 'brand-differentiation' && (cGrowth.includes('differentiation') || cGrowth.includes('brand'))) score += 3;
+    }
+
+    // Audience matching
+    for (const aud of audienceSelections) {
+      if (aud === 'consumers' && cAudience.includes('consumer')) score += 2;
+      if (aud === 'small-businesses' && cAudience.includes('smb')) score += 2;
+      if (aud === 'commercial-verticals' && cAudience.includes('commercial')) score += 2;
+      if (aud === 'affinity-communities' && (cTags.includes('affinity') || cGrowth.includes('affinity'))) score += 2;
+      if (aud === 'existing-customers' && cModel.includes('product line')) score += 2;
+    }
+
+    // Go-to-market model matching
+    if (gtmSelection === 'standalone-brand' && cModel.includes('standalone')) score += 2;
+    if (gtmSelection === 'endorsed-solution' && (cModel.includes('endorsed') || cModel.includes('fi-endorsed'))) score += 2;
+    if (gtmSelection === 'product-line' && cModel.includes('product line')) score += 2;
+
+    // Launch posture matching (time to launch as proxy)
+    if (postureSelection === 'fast-launch' && (cLaunch.includes('3-4') || cLaunch.includes('3-5'))) score += 1;
+    if (postureSelection === 'test-learn' && (cLaunch.includes('3-4') || cLaunch.includes('3-5') || cLaunch.includes('4-5'))) score += 1;
+    if (postureSelection === 'fully-differentiated' && (cLaunch.includes('6-9') || cLaunch.includes('5-7'))) score += 1;
+
+    return { concept, score };
+  });
+
+  // Sort by score descending
+  scored.sort((a, b) => b.score - a.score);
+
   const seenIds = new Set();
   const allRecommended = [];
 
-  // If there's a vertical match from user input, prioritize it
+  // If there's a vertical match from user input, always include it first
   const verticalMatch = chatSelections['_verticalMatch'];
   if (verticalMatch) {
     const matchedConcept = CONCEPTS.find(c => c.id === verticalMatch);
-    if (matchedConcept && !seenIds.has(matchedConcept.id)) {
+    if (matchedConcept) {
       seenIds.add(matchedConcept.id);
       allRecommended.push(matchedConcept);
     }
   }
 
-  for (const goal of growthGoals) {
-    const ids = RECOMMENDATION_MAP[goal] || [];
-    for (const id of ids) {
-      if (!seenIds.has(id)) {
-        seenIds.add(id);
-        const concept = CONCEPTS.find(c => c.id === id);
-        if (concept) allRecommended.push(concept);
-      }
+  // Fill remaining slots from scored results
+  for (const { concept } of scored) {
+    if (allRecommended.length >= 3) break;
+    if (!seenIds.has(concept.id)) {
+      seenIds.add(concept.id);
+      allRecommended.push(concept);
     }
   }
+
   const recommended = allRecommended.slice(0, 3);
 
   const reasons = growthGoals.map(g => RECOMMENDATION_REASONS[g]).filter(Boolean);
@@ -588,8 +638,8 @@ function matchInputToGoal(input) {
   const keywords = {
     'deposits': ['deposit', 'deposits', 'savings', 'funding'],
     'fee-income': ['fee', 'income', 'revenue', 'non-interest'],
+    'lending': ['lending', 'loan', 'finance', 'credit', 'financing'],
     'smb-relationships': ['smb', 'small business', 'business relationships', 'commercial'],
-    'new-geographies': ['geography', 'geographies', 'new market', 'expand', 'expansion'],
     'younger-consumers': ['younger', 'gen z', 'millennial', 'young', 'student', 'athlete'],
     'brand-differentiation': ['differentiat', 'brand', 'stand out', 'unique']
   };
@@ -602,17 +652,33 @@ function matchInputToGoal(input) {
 
 function matchInputToVertical(input) {
   const lower = input.toLowerCase().trim();
-  // Try to match input text against concept names, tags, audience, and key terms
   const verticalKeywords = {
-    'contractor-banking': ['contractor', 'construction', 'trades', 'plumber', 'electrician', 'hvac', 'plumbing'],
-    'healthcare-worker-banking': ['healthcare', 'nurse', 'nursing', 'medical', 'health care', 'therapist'],
-    'nonprofit-banking': ['nonprofit', 'non-profit', 'foundation', 'charity', 'mission-driven'],
-    'local-smb-banking': ['local business', 'main street', 'retail shop', 'restaurant'],
-    'student-athlete-banking': ['student athlete', 'nil', 'college athlete', 'athlete'],
-    'agricultural-banking': ['agriculture', 'agricultural', 'farming', 'farmer', 'ranch', 'agribusiness'],
-    'gig-economy-banking': ['gig', 'freelance', 'freelancer', 'rideshare', 'delivery', 'creator'],
-    'military-family-banking': ['military', 'veteran', 'armed forces', 'service member'],
-    'creative-professional-banking': ['creative', 'artist', 'musician', 'designer', 'photographer', 'filmmaker']
+    'healthcare-practice-banking': ['healthcare practice', 'physician', 'dental practice', 'dentist', 'clinic', 'medical practice'],
+    'college-athlete-banking': ['college athlete', 'nil', 'student athlete', 'ncaa'],
+    'trucking-banking': ['trucking', 'trucker', 'owner-operator', 'freight', 'logistics'],
+    'construction-and-trades-banking': ['construction', 'contractor', 'trades', 'builder', 'plumber', 'electrician', 'hvac'],
+    'professional-services-banking': ['professional services', 'consultant', 'agency', 'accounting firm', 'law firm'],
+    'family-and-youth-banking': ['family banking', 'kids', 'teens', 'youth', 'allowance', 'parental'],
+    'agriculture-banking': ['agriculture', 'farming', 'farmer', 'ranch', 'agribusiness', 'crop'],
+    'maker-and-artisan-banking': ['maker', 'artisan', 'etsy', 'craft', 'handmade'],
+    'life-sciences-banking': ['life sciences', 'clinical trial', 'biotech', 'pharma'],
+    'remittance-and-newcomer-family-banking': ['remittance', 'cross-border', 'immigrant family', 'money transfer'],
+    'emerging-athlete-and-artist-wealth-banking': ['emerging athlete', 'emerging artist', 'talent wealth', 'pro athlete'],
+    'rv-lifestyle-banking': ['rv', 'recreational vehicle', 'motorhome', 'camper van'],
+    'values-driven-banking': ['values', 'cause', 'charitable', 'purpose-driven', 'impact banking'],
+    'veteran-entrepreneur-banking': ['veteran entrepreneur', 'vetpreneur', 'veteran business', 'vet-owned'],
+    'gig-worker-banking': ['gig', 'freelance', 'freelancer', 'rideshare', 'delivery worker', 'gig economy'],
+    'franchisee-banking': ['franchise', 'franchisee', 'franchise owner'],
+    'first-responder-banking': ['first responder', 'firefighter', 'paramedic', 'emt', 'police'],
+    'boat-owner-banking': ['boat', 'boating', 'marina', 'yacht', 'charter'],
+    'gamer-and-streamer-banking': ['gamer', 'streamer', 'gaming', 'esports', 'twitch'],
+    'landscaper-banking': ['landscaper', 'landscaping', 'lawn care', 'groundskeeping'],
+    'k-12-education-banking': ['teacher', 'k-12', 'education banking', 'classroom', 'school'],
+    'workplace-financial-wellness-banking': ['workplace', 'employee wellness', 'payroll banking', 'employer'],
+    'survivor-safety-banking': ['survivor', 'domestic violence', 'safety banking', 'financial abuse'],
+    'newcomer-banking': ['newcomer', 'immigrant', 'new to us', 'relocated', 'new arrival'],
+    'nurse-and-healthcare-worker-banking': ['nurse', 'nursing', 'healthcare worker', 'medical worker'],
+    'outdoor-adventure-banking': ['outdoor', 'adventure', 'hiking', 'camping', 'recreation']
   };
 
   for (const [conceptId, keys] of Object.entries(verticalKeywords)) {

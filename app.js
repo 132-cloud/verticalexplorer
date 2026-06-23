@@ -317,6 +317,23 @@ function renderConceptDetail(conceptId) {
     .map(id => CONCEPTS.find(c => c.id === id))
     .filter(Boolean);
 
+  // Build brand materials HTML (only if any URLs exist)
+  let brandMaterialsHtml = '';
+  const hasSourceLinks = concept.ataglanceUrl || concept.deckUrl || concept.teaserUrl;
+  if (hasSourceLinks || concept.brandName) {
+    const links = [];
+    if (concept.ataglanceUrl) links.push(`<a href="${concept.ataglanceUrl}" target="_blank" rel="noopener" class="source-link">At-A-Glance</a>`);
+    if (concept.deckUrl) links.push(`<a href="${concept.deckUrl}" target="_blank" rel="noopener" class="source-link">Deck</a>`);
+    if (concept.teaserUrl) links.push(`<a href="${concept.teaserUrl}" target="_blank" rel="noopener" class="source-link">Teaser</a>`);
+    brandMaterialsHtml = `
+      <div class="sidebar-card source-materials-card">
+        <h3>Brand Materials</h3>
+        ${concept.brandName ? `<p class="brand-materials-label">Concept Brand: ${concept.brandName}</p>` : ''}
+        ${links.length > 0 ? `<div class="source-links">${links.join('')}</div>` : ''}
+      </div>
+    `;
+  }
+
   const content = document.getElementById('appContent');
   content.innerHTML = `
     <section class="concept-detail">
@@ -353,7 +370,7 @@ function renderConceptDetail(conceptId) {
             <div class="detail-section">
               <h2>Product & Feature Hooks</h2>
               <ul class="feature-list">
-                ${concept.features.map(f => `<li>${f}</li>`).join('')}
+                ${concept.features.slice(0, 6).map(f => `<li>${f}</li>`).join('')}
               </ul>
             </div>
 
@@ -377,23 +394,21 @@ function renderConceptDetail(conceptId) {
               <h3>Quick Facts</h3>
               <div class="sidebar-facts">
                 <div class="fact">
-                  <span class="fact-label">Complexity</span>
-                  <span class="fact-value">${concept.complexity}</span>
-                </div>
-                <div class="fact">
                   <span class="fact-label">Time to Launch</span>
                   <span class="fact-value">${concept.launchTime}</span>
                 </div>
                 <div class="fact">
                   <span class="fact-label">Audience</span>
-                  <span class="fact-value">${concept.tags[0]}</span>
+                  <span class="fact-value">${concept.audienceType || concept.tags[0]}</span>
                 </div>
                 <div class="fact">
                   <span class="fact-label">Model</span>
-                  <span class="fact-value">${concept.tags[2] || concept.tags[1]}</span>
+                  <span class="fact-value">${concept.launchModel || concept.tags[2] || concept.tags[1]}</span>
                 </div>
               </div>
             </div>
+
+            ${brandMaterialsHtml}
 
             <div class="sidebar-actions">
               <button class="btn btn-primary btn-full" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
@@ -577,24 +592,27 @@ function renderBuildYourOwn() {
           <p class="section-subtitle" style="text-align: left; margin-bottom: 2rem;">These verticals started as conversations and became differentiated banking experiences.</p>
           <div class="byo-example-grid">
             <div class="byo-example">
-              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=250&fit=crop')"></div>
+              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=250&fit=crop')"></div>
               <div class="byo-example-content">
-                <h4>Cannabis Banking</h4>
-                <p>Custom compliance-first banking for licensed cannabis operators in states with legal frameworks.</p>
+                <h4>Business Member Banking</h4>
+                <p>Purpose-built digital banking for SMB and commercial members, delivered through a sidecar core without disrupting the primary institution.</p>
+                <span class="byo-brand-label">PILLUR</span>
               </div>
             </div>
             <div class="byo-example">
-              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=250&fit=crop')"></div>
+              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=250&fit=crop')"></div>
               <div class="byo-example-content">
-                <h4>Creator Economy Banking</h4>
-                <p>Purpose-built financial tools for content creators managing brand deals, royalties, and multi-platform income.</p>
+                <h4>Solo Biz Banking</h4>
+                <p>Digital business banking for solopreneurs, gig workers, freelancers, and creators managing flexible income streams.</p>
+                <span class="byo-brand-label">HUSTL</span>
               </div>
             </div>
             <div class="byo-example">
-              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop')"></div>
+              <div class="byo-example-img" style="background-image: url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=250&fit=crop')"></div>
               <div class="byo-example-content">
-                <h4>Professional Services Banking</h4>
-                <p>Specialized banking for law firms, accounting practices, and consulting firms with trust account management.</p>
+                <h4>Service Members Banking</h4>
+                <p>Community-first digital banking for military, first responders, educators, healthcare workers, and veterans.</p>
+                <span class="byo-brand-label">ValorFI Heroes</span>
               </div>
             </div>
           </div>

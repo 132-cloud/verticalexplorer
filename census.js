@@ -7,50 +7,85 @@ const CENSUS_API_KEY = '98d2cf44c224ed0a9e77d400beb14caf3b91c44b';
 
 // NAICS codes mapped to each vertical concept
 const CONCEPT_NAICS = {
-  'contractor-banking': {
-    codes: ['23'], // Construction
-    label: 'Construction & Contracting',
-    description: 'Specialty trade contractors, general contractors, and construction firms'
-  },
-  'healthcare-worker-banking': {
+  'healthcare-practice-banking': {
     codes: ['62'], // Health Care and Social Assistance
-    label: 'Healthcare & Social Assistance',
-    description: 'Ambulatory health care, hospitals, nursing facilities, and social assistance'
+    label: 'Healthcare Practices',
+    description: 'Physician offices, dental offices, and outpatient care centers'
   },
-  'nonprofit-banking': {
-    codes: ['81'], // Other Services (includes nonprofits, civic organizations)
-    label: 'Civic & Nonprofit Organizations',
-    description: 'Religious, grantmaking, civic, professional, and similar organizations'
-  },
-  'local-smb-banking': {
-    codes: ['44', '72'], // Retail Trade + Accommodation/Food
-    label: 'Retail & Hospitality',
-    description: 'Local retail shops, restaurants, and accommodation businesses'
-  },
-  'student-athlete-banking': {
+  'college-athlete-banking': {
     codes: ['71'], // Arts, Entertainment, and Recreation
     label: 'Sports & Recreation',
     description: 'Spectator sports, fitness, recreation, and entertainment'
   },
-  'agricultural-banking': {
+  'trucking-banking': {
+    codes: ['48'], // Transportation and Warehousing
+    label: 'Trucking & Transportation',
+    description: 'Truck transportation, freight, and logistics operations'
+  },
+  'construction-and-trades-banking': {
+    codes: ['23'], // Construction
+    label: 'Construction & Trades',
+    description: 'Specialty trade contractors, general contractors, and construction firms'
+  },
+  'professional-services-banking': {
+    codes: ['54'], // Professional, Scientific, and Technical Services
+    label: 'Professional Services',
+    description: 'Legal, accounting, consulting, and technical services firms'
+  },
+  'agriculture-banking': {
     codes: ['11'], // Agriculture, Forestry, Fishing and Hunting
     label: 'Agriculture & Farming',
     description: 'Crop production, animal production, forestry, and support activities'
   },
-  'gig-economy-banking': {
-    codes: ['54', '56'], // Professional/Technical Services + Admin/Support
-    label: 'Professional & Freelance Services',
+  'maker-and-artisan-banking': {
+    codes: ['31', '45'], // Manufacturing + Retail (e-commerce)
+    label: 'Makers & Artisan Commerce',
+    description: 'Small-scale manufacturing, craft production, and online retail'
+  },
+  'life-sciences-banking': {
+    codes: ['54', '62'], // Professional Services + Healthcare
+    label: 'Life Sciences & Research',
+    description: 'Scientific research, pharmaceutical, and clinical trial operations'
+  },
+  'gig-worker-banking': {
+    codes: ['54', '56'], // Professional/Technical + Admin/Support
+    label: 'Gig & Freelance Services',
     description: 'Professional services, technical consulting, and administrative support'
   },
-  'military-family-banking': {
-    codes: ['92'], // Public Administration
-    label: 'Public Administration & Defense',
-    description: 'Federal, state, and local government administration'
+  'franchisee-banking': {
+    codes: ['72', '44'], // Accommodation/Food + Retail
+    label: 'Franchise Operations',
+    description: 'Restaurant, retail, and service franchise establishments'
   },
-  'creative-professional-banking': {
-    codes: ['51', '71'], // Information + Arts/Entertainment
-    label: 'Creative & Media Industries',
-    description: 'Publishing, motion picture, broadcasting, design, and performing arts'
+  'landscaper-banking': {
+    codes: ['56'], // Administrative and Support Services (includes landscaping)
+    label: 'Landscaping Services',
+    description: 'Landscaping, lawn care, and grounds maintenance services'
+  },
+  'veteran-entrepreneur-banking': {
+    codes: ['44', '54', '23'], // Retail + Professional + Construction
+    label: 'Veteran-Owned Businesses',
+    description: 'Veteran-owned small businesses across multiple sectors'
+  },
+  'first-responder-banking': {
+    codes: ['92'], // Public Administration
+    label: 'Public Safety & Emergency Services',
+    description: 'Fire protection, law enforcement, and emergency medical services'
+  },
+  'nurse-and-healthcare-worker-banking': {
+    codes: ['62'], // Health Care and Social Assistance
+    label: 'Healthcare Workforce',
+    description: 'Hospitals, nursing facilities, and ambulatory health care services'
+  },
+  'boat-owner-banking': {
+    codes: ['71', '48'], // Recreation + Transportation
+    label: 'Boating & Marine Recreation',
+    description: 'Marinas, boat dealers, and marine recreation services'
+  },
+  'outdoor-adventure-banking': {
+    codes: ['71'], // Arts, Entertainment, and Recreation
+    label: 'Outdoor Recreation',
+    description: 'Outdoor recreation, adventure sports, and nature tourism'
   }
 };
 
