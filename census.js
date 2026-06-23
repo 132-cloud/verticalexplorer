@@ -249,8 +249,14 @@ function processCensusResults(results, naicsConfig, isNational, stateFips) {
 // ============================================================
 
 function getSelectedGeo() {
-  // Check if user selected a geography in the chat wizard
-  return chatSelections && chatSelections['geography'] ? chatSelections['geography'] : 'national';
+  // Check if user selected a geography in the chat wizard (active or persisted)
+  if (typeof chatSelections !== 'undefined' && chatSelections && chatSelections['geography']) {
+    return chatSelections['geography'];
+  }
+  if (window._chatSelectedGeo) {
+    return window._chatSelectedGeo;
+  }
+  return 'national';
 }
 
 function renderCensusSidebar(conceptId) {

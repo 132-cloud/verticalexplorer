@@ -126,8 +126,8 @@ function renderHome() {
 
     <section class="featured-preview">
       <div class="container">
-        <h2 class="section-title">Popular vertical concepts</h2>
-        <p class="section-subtitle">Explore some of our most requested growth concepts.</p>
+        <h2 class="section-title">Trending vertical concepts</h2>
+        <p class="section-subtitle">Explore the latest high growth opportunities.</p>
         <div class="preview-grid">
           ${CONCEPTS.slice(0, 3).map(c => renderConceptCard(c)).join('')}
         </div>

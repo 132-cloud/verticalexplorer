@@ -252,6 +252,12 @@ function closeChatBox() {
   if (box) {
     box.style.maxHeight = '56px';
   }
+
+  // Persist geography selection for census panels on concept pages
+  if (chatSelections['geography'] && chatSelections['geography'] !== 'national') {
+    window._chatSelectedGeo = chatSelections['geography'];
+  }
+
   setTimeout(() => {
     chatStep = -1;
     chatSelections = {};
@@ -267,10 +273,16 @@ function closeChatBox() {
 // ============================================================
 
 function startChatFlow(initialGoal) {
+  const savedVerticalMatch = chatSelections['_verticalMatch'];
   chatStep = 0;
   chatSelections = {};
   chatExpanded = true;
   geoFilterText = '';
+
+  // Preserve vertical match from user input
+  if (savedVerticalMatch) {
+    chatSelections['_verticalMatch'] = savedVerticalMatch;
+  }
 
   if (initialGoal) {
     chatSelections['growth-goal'] = [initialGoal];
