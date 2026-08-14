@@ -253,6 +253,10 @@ function getSelectedGeo() {
   if (typeof chatSelections !== 'undefined' && chatSelections && chatSelections['geography']) {
     return chatSelections['geography'];
   }
+  // Check if user selected a geography in the Growth Path wizard
+  if (typeof wizardSelections !== 'undefined' && wizardSelections && wizardSelections['geography']) {
+    return wizardSelections['geography'];
+  }
   if (window._chatSelectedGeo) {
     return window._chatSelectedGeo;
   }

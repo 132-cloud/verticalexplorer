@@ -5,6 +5,7 @@
 let currentPage = 'home';
 let wizardStep = 0;
 let wizardSelections = {};
+let wizardGeoFilter = '';
 
 // ============================================================
 // NAVIGATION
@@ -15,6 +16,11 @@ function navigateTo(page, data) {
   closeMobileNav();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
+  // Kill any active ScrollTrigger instances from previous page
+  if (typeof ScrollTrigger !== 'undefined') {
+    ScrollTrigger.getAll().forEach(t => t.kill());
+  }
+
   const content = document.getElementById('appContent');
   content.style.opacity = '0';
   content.style.transform = 'translateY(10px)';
@@ -22,7 +28,7 @@ function navigateTo(page, data) {
   setTimeout(() => {
     switch (page) {
       case 'home': renderHome(); break;
-      case 'wizard': wizardStep = 0; wizardSelections = {}; renderWizard(); break;
+      case 'wizard': wizardStep = 0; wizardSelections = {}; wizardGeoFilter = ''; renderWizard(); break;
       case 'browse': renderBrowse(); break;
       case 'results': renderResults(); break;
       case 'concept': renderConceptDetail(data); break;
@@ -53,55 +59,58 @@ function closeMobileNav() {
 function renderHome() {
   const content = document.getElementById('appContent');
   content.innerHTML = `
-    <section class="chat-hero">
-      <canvas class="chat-hero-canvas" id="shaderCanvas"></canvas>
-      <div class="chat-hero-grain"></div>
-      <div class="chat-hero-fade"></div>
+    <div class="hero-scroll-track">
+      <section class="chat-hero pinned-hero">
+        <canvas class="chat-hero-canvas" id="shaderCanvas"></canvas>
+        <div class="chat-hero-grain"></div>
+        <div class="chat-hero-fade"></div>
 
-      <div class="chat-hero-content">
-        <h1 class="chat-hero-headline">Explore vertical banking strategies<br>built around your growth goals.</h1>
-        <p class="chat-hero-subquestion">What do you want to grow?</p>
+        <div class="chat-hero-content hero-zoom-container" id="heroZoomContainer">
+          <div class="hero-text-group">
+            <h1 class="chat-hero-headline">VERTICAL BANKING<br>BUILT AROUND<br>YOUR GROWTH GOALS.</h1>
+          </div>
 
-        <!-- Prompt Box -->
-        <div class="chat-prompt-wrapper">
-          <div class="chat-prompt-box" id="chatPromptBox">
-            <form class="chat-input-row" onsubmit="handleChatInput(event)">
-              <div class="chat-input-container">
-                <input
-                  type="text"
-                  id="chatInput"
-                  class="chat-input"
-                  autocomplete="off"
-                  onfocus="this.parentElement.querySelector('.chat-placeholder').style.display='none'"
-                  onblur="if(!this.value) this.parentElement.querySelector('.chat-placeholder').style.display=''"
-                />
-                <span class="chat-placeholder" id="chatPlaceholder">${CHAT_PLACEHOLDERS[0]}</span>
-              </div>
-              <button type="submit" class="chat-submit-btn" aria-label="Submit">
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 16V4M10 4L5 9M10 4L15 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-            </form>
+          <!-- Prompt Box -->
+          <div class="chat-prompt-wrapper">
+            <div class="chat-prompt-box" id="chatPromptBox">
+              <form class="chat-input-row" onsubmit="handleChatInput(event)">
+                <div class="chat-input-container">
+                  <input
+                    type="text"
+                    id="chatInput"
+                    class="chat-input"
+                    autocomplete="off"
+                    onfocus="this.parentElement.querySelector('.chat-placeholder').style.display='none'"
+                    onblur="if(!this.value) this.parentElement.querySelector('.chat-placeholder').style.display=''"
+                  />
+                  <span class="chat-placeholder" id="chatPlaceholder">${CHAT_PLACEHOLDERS[0]}</span>
+                </div>
+                <button type="submit" class="chat-submit-btn" aria-label="Submit">
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 16V4M10 4L5 9M10 4L15 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </form>
 
-            <!-- Expanded response area -->
-            <div id="chatResponse"></div>
+              <!-- Expanded response area -->
+              <div id="chatResponse"></div>
+            </div>
+          </div>
+
+          <!-- Pill Buttons -->
+          <div class="chat-pills" id="chatPills">
+            <button class="chat-pill" onclick="handleChatPillClick('deposits')">Grow deposits</button>
+            <button class="chat-pill" onclick="handleChatPillClick('fee-income')">Fee income</button>
+            <button class="chat-pill" onclick="handleChatPillClick('smb-relationships')">SMB relationships</button>
+            <button class="chat-pill" onclick="handleChatPillClick('younger-consumers')">Younger consumers</button>
+            <button class="chat-pill" onclick="handleChatPillClick('new-geographies')">New geographies</button>
+            <button class="chat-pill" onclick="handleChatPillClick('brand-differentiation')">Differentiation</button>
+            <button class="chat-pill chat-pill-cta" onclick="navigateTo('browse')">Browse all concepts</button>
+            <button class="chat-pill chat-pill-cta" onclick="window.location.href='mailto:dbarone@nymbus.com'">Build your own</button>
           </div>
         </div>
-
-        <!-- Pill Buttons -->
-        <div class="chat-pills" id="chatPills">
-          <button class="chat-pill" onclick="handleChatPillClick('deposits')">Grow deposits</button>
-          <button class="chat-pill" onclick="handleChatPillClick('fee-income')">Fee income</button>
-          <button class="chat-pill" onclick="handleChatPillClick('smb-relationships')">SMB relationships</button>
-          <button class="chat-pill" onclick="handleChatPillClick('younger-consumers')">Younger consumers</button>
-          <button class="chat-pill" onclick="handleChatPillClick('new-geographies')">New geographies</button>
-          <button class="chat-pill" onclick="handleChatPillClick('brand-differentiation')">Differentiation</button>
-          <button class="chat-pill chat-pill-cta" onclick="navigateTo('browse')">Browse all concepts</button>
-          <button class="chat-pill chat-pill-cta" onclick="navigateTo('build-your-own')">Build your own</button>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
     <section class="brand-models">
       <div class="container">
@@ -143,6 +152,7 @@ function renderHome() {
     const canvas = document.getElementById('shaderCanvas');
     if (canvas) initShaderBackground(canvas);
     initChatHero();
+    initScrollZoom();
   });
 }
 
@@ -154,6 +164,12 @@ function renderWizard() {
   const content = document.getElementById('appContent');
   const step = WIZARD_STEPS[wizardStep];
   const progress = ((wizardStep) / WIZARD_STEPS.length) * 100;
+
+  // Geography step gets a special render with type-to-search
+  if (step.isGeoStep) {
+    renderWizardGeoStep(content, step, progress);
+    return;
+  }
 
   content.innerHTML = `
     <section class="wizard-page">
@@ -198,6 +214,102 @@ function renderWizard() {
   `;
 }
 
+function renderWizardGeoStep(content, step, progress) {
+  const allGeos = [
+    { id: 'national', label: 'National (all states)' },
+    ...US_STATES.map(s => ({ id: s.fips, label: s.name }))
+  ];
+
+  const filtered = wizardGeoFilter
+    ? allGeos.filter(g => g.label.toLowerCase().includes(wizardGeoFilter.toLowerCase()))
+    : allGeos.slice(0, 12);
+
+  content.innerHTML = `
+    <section class="wizard-page">
+      <div class="wizard-container">
+        <div class="wizard-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${progress}%"></div>
+          </div>
+          <div class="progress-steps">
+            ${WIZARD_STEPS.map((s, i) => `
+              <span class="progress-step ${i < wizardStep ? 'completed' : ''} ${i === wizardStep ? 'active' : ''}">
+                ${i < wizardStep ? '✓' : i + 1}
+              </span>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="wizard-content">
+          <h1 class="wizard-question">${step.question}</h1>
+          <p class="wizard-subtitle">${step.subtitle}</p>
+
+          <div class="wizard-geo-search">
+            <input type="text"
+                   class="wizard-geo-input"
+                   placeholder="Type a state name..."
+                   value="${wizardGeoFilter}"
+                   oninput="handleWizardGeoFilter(this.value)"
+                   id="wizardGeoSearchInput" />
+          </div>
+
+          <div class="wizard-options wizard-geo-options" id="wizardGeoList">
+            ${filtered.map(g => `
+              <button class="wizard-option ${wizardSelections['geography'] === g.id ? 'selected' : ''}" onclick="selectWizardGeo('${g.id}')">
+                <span class="option-content">
+                  <span class="option-label">${g.label}</span>
+                </span>
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="wizard-nav">
+            ${wizardStep > 0 ? '<button class="btn btn-ghost" onclick="prevWizardStep()">← Back</button>' : '<div></div>'}
+            <button class="btn btn-primary" onclick="nextWizardStep()" ${!wizardSelections['geography'] ? 'disabled' : ''}>
+              See Recommendations
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+
+  // Focus the search input
+  requestAnimationFrame(() => {
+    const input = document.getElementById('wizardGeoSearchInput');
+    if (input) input.focus();
+  });
+}
+
+function handleWizardGeoFilter(value) {
+  wizardGeoFilter = value;
+  const allGeos = [
+    { id: 'national', label: 'National (all states)' },
+    ...US_STATES.map(s => ({ id: s.fips, label: s.name }))
+  ];
+
+  const filtered = wizardGeoFilter
+    ? allGeos.filter(g => g.label.toLowerCase().includes(wizardGeoFilter.toLowerCase()))
+    : allGeos.slice(0, 12);
+
+  const list = document.getElementById('wizardGeoList');
+  if (list) {
+    list.innerHTML = filtered.map(g => `
+      <button class="wizard-option ${wizardSelections['geography'] === g.id ? 'selected' : ''}" onclick="selectWizardGeo('${g.id}')">
+        <span class="option-content">
+          <span class="option-label">${g.label}</span>
+        </span>
+      </button>
+    `).join('');
+  }
+}
+
+function selectWizardGeo(geoId) {
+  wizardSelections['geography'] = geoId;
+  wizardGeoFilter = '';
+  nextWizardStep();
+}
+
 function selectWizardOption(stepId, optionId) {
   wizardSelections[stepId] = optionId;
   renderWizard();
@@ -229,6 +341,10 @@ function renderResults() {
   const recommended = recommendedIds.map(id => CONCEPTS.find(c => c.id === id)).filter(Boolean);
   const reason = RECOMMENDATION_REASONS[growthGoal] || RECOMMENDATION_REASONS['deposits'];
 
+  const geoId = wizardSelections['geography'] || 'national';
+  const geoState = US_STATES.find(s => s.fips === geoId);
+  const geoLabel = geoId === 'national' ? 'nationally' : (geoState ? geoState.name : 'nationally');
+
   const content = document.getElementById('appContent');
   content.innerHTML = `
     <section class="results-page">
@@ -237,7 +353,7 @@ function renderResults() {
           <h1>Recommended vertical concepts for your growth path</h1>
           <div class="results-why">
             <h3>Why these fit</h3>
-            <p>${reason}</p>
+            <p>${reason} Market data sized for <strong>${geoLabel}</strong>.</p>
           </div>
         </div>
 
@@ -279,13 +395,87 @@ function renderBrowse() {
 
   content.innerHTML = `
     <section class="browse-page">
-      <div class="browse-hero">
-        <h1>Explore Vertical Banking Concepts</h1>
-        <p>Browse ready-to-launch concepts organized by growth strategy, audience, and market fit.</p>
+      <div class="browse-hero-v2">
+        <div class="browse-hero-v2-inner">
+          <!-- Left: CTA, Heading, Description -->
+          <div class="browse-hero-v2-left">
+            <div class="browse-hero-v2-top">
+              <a href="mailto:dbarone@nymbus.com" class="browse-hero-v2-cta">WORK WITH LABS <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
+            </div>
+
+            <div class="browse-hero-v2-bottom">
+              <div class="browse-hero-v2-heading">
+                <div class="browse-hero-v2-word-wrap"><span class="browse-hero-v2-word browse-hero-v2-word-bold">Vertical</span></div>
+                <div class="browse-hero-v2-word-wrap"><span class="browse-hero-v2-word browse-hero-v2-word-bold">Banking</span></div>
+                <div class="browse-hero-v2-word-wrap"><span class="browse-hero-v2-word browse-hero-v2-word-bold">Concepts</span></div>
+              </div>
+              <p class="browse-hero-v2-desc">Digital banking concepts<br>built to accelerate growth<br>and serve communities</p>
+            </div>
+          </div>
+
+          <!-- Right: Blob animation -->
+          <div class="browse-hero-v2-right">
+            <img src="images/blob.gif" alt="Animated blob" class="browse-hero-v2-blob" />
+          </div>
+        </div>
       </div>
       ${rows}
     </section>
   `;
+
+  // Animate hero elements
+  requestAnimationFrame(() => {
+    animateBrowseHero();
+  });
+}
+
+function animateBrowseHero() {
+  const desc = document.querySelector('.browse-hero-v2-desc');
+  const cta = document.querySelector('.browse-hero-v2-cta');
+  const words = document.querySelectorAll('.browse-hero-v2-word');
+  const blob = document.querySelector('.browse-hero-v2-blob');
+
+  // CTA fade up
+  if (cta) {
+    cta.style.opacity = '0';
+    cta.style.transform = 'translateY(32px)';
+    setTimeout(() => {
+      cta.style.transition = 'opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+      cta.style.opacity = '1';
+      cta.style.transform = 'translateY(0)';
+    }, 200);
+  }
+
+  // Description fade up
+  if (desc) {
+    desc.style.opacity = '0';
+    desc.style.transform = 'translateY(32px)';
+    setTimeout(() => {
+      desc.style.transition = 'opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+      desc.style.opacity = '1';
+      desc.style.transform = 'translateY(0)';
+    }, 600);
+  }
+
+  // Heading words slide up (clip reveal)
+  words.forEach((word, i) => {
+    word.style.transform = 'translateY(110%)';
+    setTimeout(() => {
+      word.style.transition = 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
+      word.style.transform = 'translateY(0)';
+    }, 400 + i * 140);
+  });
+
+  // Blob fade in
+  if (blob) {
+    blob.style.opacity = '0';
+    blob.style.transform = 'scale(0.92)';
+    setTimeout(() => {
+      blob.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+      blob.style.opacity = '1';
+      blob.style.transform = 'scale(1)';
+    }, 300);
+  }
 }
 
 function renderBrowseTile(concept) {
@@ -368,7 +558,7 @@ function renderConceptDetail(conceptId) {
             </div>
 
             <div class="detail-section">
-              <h2>Product & Feature Hooks</h2>
+              <h2>Product MVP Thesis</h2>
               <ul class="feature-list">
                 ${concept.features.slice(0, 6).map(f => `<li>${f}</li>`).join('')}
               </ul>
@@ -394,10 +584,6 @@ function renderConceptDetail(conceptId) {
               <h3>Quick Facts</h3>
               <div class="sidebar-facts">
                 <div class="fact">
-                  <span class="fact-label">Time to Launch</span>
-                  <span class="fact-value">${concept.launchTime}</span>
-                </div>
-                <div class="fact">
                   <span class="fact-label">Audience</span>
                   <span class="fact-value">${concept.audienceType || concept.tags[0]}</span>
                 </div>
@@ -412,7 +598,8 @@ function renderConceptDetail(conceptId) {
 
             <div class="sidebar-actions">
               <button class="btn btn-primary btn-full" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
-              <button class="btn btn-secondary btn-full" onclick="openStrategySession()">Explore with Nymbus</button>
+              <a href="mailto:dbarone@nymbus.com" class="btn btn-secondary btn-full">Build Your Own</a>
+              <a href="mailto:dbarone@nymbus.com" class="btn btn-secondary btn-full">Explore with Nymbus</a>
             </div>
           </div>
         </div>
@@ -661,6 +848,90 @@ function renderConceptCard(concept, showActions = false) {
 }
 
 // ============================================================
+// SCROLL-BOUND PINNED ZOOM (GSAP ScrollTrigger)
+// ============================================================
+
+function initScrollZoom() {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const track = document.querySelector('.hero-scroll-track');
+  const hero = document.querySelector('.chat-hero.pinned-hero');
+  const zoomContainer = document.getElementById('heroZoomContainer');
+  const chatBox = document.getElementById('chatPromptBox');
+  const heroText = document.querySelector('.hero-text-group');
+  const pills = document.getElementById('chatPills');
+
+  if (!track || !zoomContainer || !chatBox || !hero) return;
+
+  // Anchor transform-origin precisely on the chat box's center
+  // relative to the zoom container, so it stays centered during scale
+  function updateZoomOrigin() {
+    const containerRect = zoomContainer.getBoundingClientRect();
+    const targetRect = chatBox.getBoundingClientRect();
+
+    const xOrigin = ((targetRect.left + targetRect.width / 2) - containerRect.left) / containerRect.width * 100;
+    const yOrigin = ((targetRect.top + targetRect.height / 2) - containerRect.top) / containerRect.height * 100;
+
+    gsap.set(zoomContainer, { transformOrigin: `${xOrigin}% ${yOrigin}%` });
+  }
+
+  updateZoomOrigin();
+  window.addEventListener('resize', updateZoomOrigin);
+
+  // Create the scroll-scrubbed timeline
+  // CSS sticky handles pinning, GSAP handles the animation
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: track,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.5,
+      // No pin - CSS sticky handles the fixed positioning
+      invalidateOnRefresh: true,
+      onRefresh: updateZoomOrigin
+    }
+  });
+
+  // Timeline breakdown (normalized 0-1 over scroll distance):
+  // 0.00 - 0.15: Fade out headline and pills
+  // 0.10 - 0.92: Zoom scales up slowly, centered on chat box
+  // 0.92 - 1.00: Chat box fades out after filling screen
+
+  // Step 1: Fade out headline text early
+  tl.to(heroText, {
+    opacity: 0,
+    y: -50,
+    duration: 0.15,
+    ease: 'power2.out'
+  }, 0)
+
+  // Step 2: Fade out pills slightly after headline
+  .to(pills, {
+    opacity: 0,
+    y: 25,
+    duration: 0.12,
+    ease: 'power2.out'
+  }, 0.03)
+
+  // Step 3: Scale up from the chat box's center point
+  // Lower scale (20) so chat box fills screen without zooming past it
+  .to(zoomContainer, {
+    scale: 20,
+    ease: 'power1.inOut',
+    duration: 0.85
+  }, 0.07)
+
+  // Step 4: Fade out the chat box only at the very end after zoom completes
+  .to(chatBox, {
+    opacity: 0,
+    duration: 0.08,
+    ease: 'power2.in'
+  }, 0.92);
+}
+
+// ============================================================
 // MODAL & ACTIONS
 // ============================================================
 
@@ -701,9 +972,7 @@ function closeModal() {
 }
 
 function openStrategySession() {
-  document.getElementById('strategyModal').querySelector('h2').textContent = 'Strategy Session Requested';
-  document.getElementById('strategyModal').querySelector('p').textContent = 'A Nymbus vertical banking strategist will reach out within one business day to schedule a collaborative session around your selected concepts.';
-  document.getElementById('strategyModal').classList.add('active');
+  window.location.href = 'mailto:dbarone@nymbus.com';
 }
 
 // ============================================================

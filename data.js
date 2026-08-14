@@ -89,7 +89,7 @@ const CONCEPTS = [
     name: 'Trucking Banking',
     brandName: 'Convoy',
     shortDesc: 'Banking built for life on the road, with mobile business banking, driver cards, invoice factoring, tax savings, forecasting, and asset-based finance.',
-    image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=400&fit=crop',
+    image: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786680464/vertical-explorer/trucking-banking-hero.png',
     tags: ['SMB', 'Trucking', 'Logistics', 'Lending', 'Deposits'],
     category: 'Transportation, SMB, Logistics',
     audienceType: 'SMB',
@@ -1135,6 +1135,13 @@ const WIZARD_STEPS = [
       { id: 'strategic-expansion', label: 'Strategic Expansion', desc: 'Methodical rollout with full planning' },
       { id: 'fully-differentiated', label: 'Fully Differentiated Brand', desc: 'Build a complete, standalone experience' }
     ]
+  },
+  {
+    id: 'geography',
+    question: 'Where do you want to grow?',
+    subtitle: 'Select a market for opportunity sizing.',
+    isGeoStep: true,
+    options: []
   }
 ];
 
@@ -1171,6 +1178,5 @@ const BROWSE_CATEGORIES = [
   { title: 'Consumer & Affinity', filter: (c) => c.audienceType === 'Consumer' || c.audienceType === 'Consumer and SMB' },
   { title: 'Lending & Finance', filter: (c) => c.growthObjective.toLowerCase().includes('lending') || c.growthObjective.toLowerCase().includes('finance') || c.tags.some(t => t.toLowerCase().includes('lending')) },
   { title: 'Lifestyle & Recreation', filter: (c) => c.category.toLowerCase().includes('lifestyle') || c.category.toLowerCase().includes('recreation') },
-  { title: 'Fastest to Launch', filter: (c) => c.launchTime.includes('3-5') },
   { title: 'Purpose & Impact', filter: (c) => c.category.toLowerCase().includes('impact') || c.category.toLowerCase().includes('purpose') || c.category.toLowerCase().includes('inclusion') }
 ];

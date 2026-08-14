@@ -66,10 +66,13 @@ const CHAT_STEPS = [
 const CHAT_PLACEHOLDERS = [
   "Grow deposits",
   "Reach younger consumers",
+  "What do you want to grow?",
   "Launch a standalone brand",
   "Serve small businesses",
+  "What do you want to grow?",
   "Expand into new geographies",
-  "Differentiate my brand"
+  "Differentiate my brand",
+  "What do you want to grow?"
 ];
 
 // Chat state
@@ -114,28 +117,37 @@ function initShaderBackground(canvas) {
     void main() {
       vec2 uv = gl_FragCoord.xy / u_resolution;
       vec2 mouse = u_mouse;
-      float y = uv.y;
-      vec3 col;
 
-      col = vec3(0.0);
-      col = mix(col, vec3(0.0, 0.04, 0.16), smoothstep(0.95, 0.7, y));
-      col = mix(col, vec3(0.0, 0.12, 0.45), smoothstep(0.75, 0.5, y));
-      col = mix(col, vec3(0.0, 0.25, 0.7), smoothstep(0.55, 0.35, y));
+      // Base: navy ink.900 (#0D1B2A)
+      vec3 col = vec3(0.051, 0.106, 0.165);
 
-      float arcDist = length((uv - vec2(0.5, -0.5)) * vec2(0.5, 1.0));
-      float arc = smoothstep(1.0, 0.3, arcDist);
-      float bottomGlow = smoothstep(0.4, 0.0, y);
-      col = mix(col, vec3(0.0, 0.35, 0.9), bottomGlow * arc * 0.6);
+      // Aurora pink bloom upper-right (#FF4570)
+      vec2 pinkCenter = vec2(0.72, 0.82);
+      float pinkDist = length((uv - pinkCenter) * vec2(1.0, 1.2));
+      float pinkBloom = exp(-pinkDist * 2.2) * 0.35;
+      col += vec3(1.0, 0.271, 0.439) * pinkBloom;
 
+      // Magenta falloff (#E678BE)
+      float magentaDist = length((uv - vec2(0.6, 0.7)) * vec2(1.1, 1.0));
+      float magentaBloom = exp(-magentaDist * 2.8) * 0.15;
+      col += vec3(0.902, 0.471, 0.745) * magentaBloom;
+
+      // Cool blue accent lower-left (#466EB4)
+      vec2 blueCenter = vec2(0.15, 0.25);
+      float blueDist = length((uv - blueCenter) * vec2(0.9, 1.0));
+      float blueBloom = exp(-blueDist * 2.0) * 0.2;
+      col += vec3(0.275, 0.431, 0.706) * blueBloom;
+
+      // Subtle mouse-following glow (pink)
       vec2 glowCenter = vec2(mouse.x, 1.0 - mouse.y);
       float glowDist = length((uv - glowCenter) * vec2(1.4, 1.0));
-      float glow = exp(-glowDist * 3.5) * 0.25;
-      col += vec3(0.0, 0.25, 1.0) * glow;
+      float glow = exp(-glowDist * 4.0) * 0.12;
+      col += vec3(1.0, 0.271, 0.439) * glow;
 
-      float wave = sin(uv.x * 5.0 + u_time * 0.4 + mouse.x * 2.0) * 0.015;
-      wave += sin(uv.x * 3.0 - u_time * 0.25) * 0.01;
-      float waveMask = smoothstep(0.3, 0.8, 1.0 - uv.y);
-      col += vec3(0.0, 0.1, 0.3) * wave * waveMask * 2.5;
+      // Gentle drift animation
+      float wave = sin(uv.x * 3.0 + u_time * 0.3) * 0.008;
+      wave += sin(uv.y * 2.5 - u_time * 0.2) * 0.006;
+      col += vec3(0.275, 0.431, 0.706) * wave;
 
       gl_FragColor = vec4(col, 1.0);
     }
@@ -607,8 +619,8 @@ function renderChatResults(container) {
       </div>
       <div class="chat-result-actions">
         <button class="chat-action-pill chat-action-primary" onclick="closeChatBox(); setTimeout(() => navigateTo('browse'), 400)">Browse all concepts</button>
-        <button class="chat-action-pill chat-action-primary" onclick="closeChatBox(); setTimeout(() => navigateTo('build-your-own'), 400)">Build your own</button>
-        <button class="chat-action-pill" onclick="openStrategySession()">Request strategy session</button>
+        <button class="chat-action-pill chat-action-primary" onclick="window.location.href='mailto:dbarone@nymbus.com'">Build your own</button>
+        <button class="chat-action-pill" onclick="window.location.href='mailto:dbarone@nymbus.com'">Request strategy session</button>
       </div>
     </div>
   `;
