@@ -572,6 +572,12 @@ function renderConceptDetail(conceptId) {
               <p>${concept.growthThesis}</p>
             </div>
 
+            ${concept.id === 'trucking-banking' ? `
+            <div class="detail-section concept-inline-image">
+              <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786703904/nymbus-vertical-explorer/convoy-in-hand.png" alt="Convoy app in hand" class="concept-detail-img" />
+            </div>
+            ` : ''}
+
             <div class="detail-section">
               <h2>Product MVP Thesis</h2>
               <ul class="feature-list">
@@ -610,6 +616,12 @@ function renderConceptDetail(conceptId) {
             </div>
 
             ${brandMaterialsHtml}
+
+            ${concept.id === 'trucking-banking' ? `
+            <div class="sidebar-card concept-brand-logo-card">
+              <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png" alt="Convoy logo" class="concept-brand-logo" />
+            </div>
+            ` : ''}
 
             <div class="sidebar-actions">
               <button class="btn btn-primary btn-full" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
