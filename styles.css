@@ -1467,15 +1467,11 @@ img {
 }
 
 /* Concept brand logo in sidebar */
-.concept-brand-logo-card {
-  text-align: center;
-  padding: 1.5rem;
-}
-
 .concept-brand-logo {
   max-width: 180px;
   height: auto;
-  margin: 0 auto;
+  display: block;
+  margin-bottom: 1rem;
 }
 
 .related-section h2 {

@@ -533,6 +533,7 @@ function renderConceptDetail(conceptId) {
     brandMaterialsHtml = `
       <div class="sidebar-card source-materials-card">
         <h3>Brand Materials</h3>
+        ${concept.id === 'trucking-banking' ? `<img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png" alt="Convoy logo" class="concept-brand-logo" />` : ''}
         ${concept.brandName ? `<p class="brand-materials-label">Concept Brand: ${concept.brandName}</p>` : ''}
         ${links.length > 0 ? `<div class="source-links">${links.join('')}</div>` : ''}
       </div>
@@ -616,12 +617,6 @@ function renderConceptDetail(conceptId) {
             </div>
 
             ${brandMaterialsHtml}
-
-            ${concept.id === 'trucking-banking' ? `
-            <div class="sidebar-card concept-brand-logo-card">
-              <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png" alt="Convoy logo" class="concept-brand-logo" />
-            </div>
-            ` : ''}
 
             <div class="sidebar-actions">
               <button class="btn btn-primary btn-full" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
