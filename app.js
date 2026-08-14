@@ -138,7 +138,7 @@ function renderHome() {
         <h2 class="section-title">Trending vertical concepts</h2>
         <p class="section-subtitle">Explore the latest high growth opportunities.</p>
         <div class="preview-grid">
-          ${CONCEPTS.slice(0, 3).map(c => renderConceptCard(c)).join('')}
+          ${(() => { const trucking = CONCEPTS.find(c => c.id === 'trucking-banking'); const others = CONCEPTS.filter(c => c.id !== 'trucking-banking').slice(0, 2); return [trucking, ...others].filter(Boolean).map(c => renderConceptCard(c)).join(''); })()}
         </div>
         <div class="text-center" style="margin-top: 2rem;">
           <button class="btn btn-secondary" onclick="navigateTo('browse')">Browse All Concepts</button>
@@ -378,9 +378,24 @@ function renderResults() {
 function renderBrowse() {
   const content = document.getElementById('appContent');
 
-  const rows = BROWSE_CATEGORIES.map(cat => {
+  const rows = BROWSE_CATEGORIES.map((cat, catIndex) => {
     const filtered = CONCEPTS.filter(cat.filter);
-    const items = cat.limit ? filtered.slice(0, cat.limit) : filtered;
+
+    // For Featured Concepts, put trucking-banking first
+    let items;
+    if (cat.title === 'Featured Concepts') {
+      const trucking = filtered.find(c => c.id === 'trucking-banking');
+      const rest = filtered.filter(c => c.id !== 'trucking-banking');
+      const ordered = trucking ? [trucking, ...rest] : rest;
+      items = cat.limit ? ordered.slice(0, cat.limit) : ordered;
+    } else {
+      // Shuffle other rows with a seeded offset so each row looks different
+      const shifted = [...filtered];
+      const offset = (catIndex * 7) % shifted.length;
+      const reordered = [...shifted.slice(offset), ...shifted.slice(0, offset)];
+      items = cat.limit ? reordered.slice(0, cat.limit) : reordered;
+    }
+
     if (items.length === 0) return '';
 
     return `
