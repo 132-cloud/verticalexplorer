@@ -1162,12 +1162,14 @@ img {
 
 .browse-row {
   padding: 2rem 0;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 .row-title {
   font-size: 24px;
   font-weight: 800;
-  padding: 0 2rem;
+  padding: 0 2rem 0 3rem;
   margin-bottom: 1.25rem;
   letter-spacing: -0.01em;
   color: var(--ink-900);
@@ -1177,7 +1179,7 @@ img {
   display: flex;
   gap: 1.25rem;
   overflow-x: auto;
-  padding: 0 2rem 1.5rem;
+  padding: 0 2rem 1.5rem 3rem;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -2326,11 +2328,27 @@ img {
     max-width: 260px;
     width: auto;
   }
+
+  .row-title {
+    padding: 0 2rem;
+  }
+
+  .row-scroll {
+    padding: 0 2rem 1.5rem 2rem;
+  }
 }
 
 @media (max-width: 768px) {
   .browse-hero-v2-left {
     padding: 1.5rem 1.5rem 2.5rem;
+  }
+
+  .row-title {
+    padding: 0 1.5rem;
+  }
+
+  .row-scroll {
+    padding: 0 1.5rem 1.5rem 1.5rem;
   }
 
   .browse-hero-v2-right {
