@@ -493,17 +493,30 @@ function animateBrowseHero() {
   }
 }
 
+// Brand logo lookup (Cloudinary URLs)
+const BRAND_LOGOS = {
+  'trucking-banking': 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png'
+};
+
 function renderBrowseTile(concept) {
+  const logo = BRAND_LOGOS[concept.id] || '';
+  // Build category line: Vertical • Audience • Financial product
+  const vertical = concept.tags[1] || '';
+  const audience = concept.audienceType || concept.tags[0] || '';
+  const financialTags = concept.tags.filter(t => 
+    ['Lending', 'Deposits', 'Payments', 'Fee Income', 'Treasury', 'Equipment Finance', 'Invoicing'].includes(t)
+  );
+  const financialProduct = financialTags[0] || concept.tags[3] || '';
+  const categoryParts = [vertical, audience, financialProduct].filter(Boolean);
+  const categoryLine = categoryParts.join(' · ');
+
   return `
     <div class="browse-tile" onclick="navigateTo('concept', '${concept.id}')">
-      <div class="tile-image" style="background-image: url('${concept.image}')">
-        <div class="tile-overlay"></div>
-      </div>
-      <div class="tile-content">
-        <h3 class="tile-name">${concept.name}</h3>
-        <p class="tile-desc">${concept.shortDesc}</p>
-        <div class="tile-tags">
-          ${concept.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+      <div class="tile-cover" style="background-image: url('${concept.image}')">
+        <div class="tile-cover-gradient"></div>
+        <div class="tile-cover-content">
+          ${logo ? `<img src="${logo}" alt="${concept.brandName} logo" class="tile-brand-logo" />` : `<h3 class="tile-brand-name">${concept.brandName || concept.name}</h3>`}
+          <p class="tile-category-line">${categoryLine}</p>
         </div>
       </div>
     </div>
