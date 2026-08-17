@@ -1135,6 +1135,23 @@ img {
   flex-wrap: wrap;
 }
 
+.cta-email-fallback {
+  text-align: center;
+  margin-top: 0.75rem;
+  font-size: 13px;
+  color: var(--ink-500);
+}
+
+.cta-email-fallback a {
+  color: var(--pink);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cta-email-fallback a:hover {
+  text-decoration: underline;
+}
+
 /* --- BROWSE PAGE (Netflix-style) --- */
 .browse-page {
   padding-top: 72px;

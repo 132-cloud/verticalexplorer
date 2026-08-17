@@ -367,13 +367,7 @@ function renderResults() {
           <button class="btn btn-secondary" onclick="navigateTo('browse')">Browse All Concepts</button>
           <button class="btn btn-primary" onclick="openStrategySession()">Request Strategy Session</button>
         </div>
-      </div>
-    </section>
-  `;
-}
-
-// ============================================================
-// BROWSE PAGE (Netflix-style)
+        <p class="cta-email-fallback">or email <a href="mailto:labs@nymbus.com">labs@nymbus.com</a></p>
 // ============================================================
 
 function renderBrowse() {
@@ -663,6 +657,7 @@ function renderConceptDetail(conceptId) {
               <button class="btn btn-primary btn-full" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
               <a href="https://nymbus.com/lp/labs-contact-us/" target="_blank" rel="noopener" class="btn btn-secondary btn-full">Build Your Own</a>
               <a href="https://nymbus.com/lp/labs-contact-us/" target="_blank" rel="noopener" class="btn btn-secondary btn-full">Explore with Nymbus</a>
+              <p class="cta-email-fallback">or email <a href="mailto:labs@nymbus.com">labs@nymbus.com</a></p>
             </div>
           </div>
         </div>
@@ -797,6 +792,7 @@ function renderStrategyRoom() {
             <button class="btn btn-secondary" onclick="navigateTo('browse')">Browse More Concepts</button>
             <button class="btn btn-primary" onclick="openStrategySession()">Request Strategy Session</button>
           </div>
+          <p class="cta-email-fallback">or email <a href="mailto:labs@nymbus.com">labs@nymbus.com</a></p>
         </div>
       </section>
     `;
@@ -917,6 +913,7 @@ function renderBuildYourOwn() {
               <button class="btn btn-primary btn-lg" onclick="openStrategySession()">Talk to Labs</button>
               <button class="btn btn-secondary btn-lg" onclick="navigateTo('browse')">Browse existing concepts</button>
             </div>
+            <p class="cta-email-fallback">or email <a href="mailto:labs@nymbus.com">labs@nymbus.com</a></p>
           </div>
         </div>
       </div>
