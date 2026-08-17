@@ -368,6 +368,11 @@ function renderResults() {
           <button class="btn btn-primary" onclick="openStrategySession()">Request Strategy Session</button>
         </div>
         <p class="cta-email-fallback">or email <a href="mailto:labs@nymbus.com">labs@nymbus.com</a></p>
+      </div>
+    </section>
+  `;
+}
+
 // ============================================================
 
 function renderBrowse() {
