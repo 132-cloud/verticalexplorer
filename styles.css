@@ -1296,11 +1296,19 @@ img {
 }
 
 .concept-hero-content h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 400;
   margin-bottom: 0.75rem;
   color: #fff;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
+}
+
+.concept-hero-logo {
+  max-width: 200px;
+  max-height: 60px;
+  height: auto;
+  display: block;
+  margin-bottom: 0.75rem;
 }
 
 .concept-hero-desc {

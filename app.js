@@ -583,7 +583,8 @@ function renderConceptDetail(conceptId) {
         <div class="concept-hero-overlay"></div>
         <div class="concept-hero-content">
           <button class="btn btn-ghost btn-back" onclick="navigateTo('browse')">← Back to Concepts</button>
-          <h1>${concept.name}</h1>
+          ${BRAND_LOGOS[concept.id] ? `<img src="${BRAND_LOGOS[concept.id].tileUrl || BRAND_LOGOS[concept.id].url}" alt="${concept.brandName} logo" class="concept-hero-logo" />` : ''}
+          <h1 class="concept-hero-title">${concept.name}</h1>
           <p class="concept-hero-desc">${concept.shortDesc}</p>
           <div class="concept-hero-tags">
             ${concept.tags.map(t => `<span class="tag tag-light">${t}</span>`).join('')}
