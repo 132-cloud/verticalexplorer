@@ -592,7 +592,7 @@ function renderConceptDetail(conceptId) {
           <div class="concept-hero-tags">
             ${concept.tags.map(t => `<span class="tag tag-light">${t}</span>`).join('')}
           </div>
-          ${concept.id === 'trucking-banking' ? `<a href="https://convoy.nymbus.com" target="_blank" rel="noopener" class="btn-experience"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> EXPERIENCE</a>` : ''}
+          ${concept.id === 'trucking-banking' ? `<a href="assets/Convoy_Microsite_Generic-.html" target="_blank" rel="noopener" class="btn-experience"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Experience</a>` : ''}
         </div>
       </div>
 
