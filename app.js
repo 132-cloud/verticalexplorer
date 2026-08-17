@@ -563,12 +563,12 @@ function renderConceptDetail(conceptId) {
 
   // Build brand materials HTML (only if any URLs exist)
   let brandMaterialsHtml = '';
-  const hasSourceLinks = concept.ataglanceUrl || concept.deckUrl || concept.teaserUrl;
+  const hasSourceLinks = concept.ataglanceUrl || concept.teaserUrl;
   if (hasSourceLinks || concept.brandName) {
     const links = [];
     if (concept.ataglanceUrl) links.push(`<a href="${concept.ataglanceUrl}" target="_blank" rel="noopener" class="source-link">At-A-Glance</a>`);
-    if (concept.deckUrl) links.push(`<a href="${concept.deckUrl}" target="_blank" rel="noopener" class="source-link">Deck</a>`);
     if (concept.teaserUrl) links.push(`<a href="${concept.teaserUrl}" target="_blank" rel="noopener" class="source-link">Teaser</a>`);
+    if (concept.id === 'trucking-banking') links.push(`<a href="https://res.cloudinary.com/duio2kdnj/image/upload/v1786969337/nymbus-vertical-explorer/convoy-brand-identity.png" target="_blank" rel="noopener" class="source-link">Brand Identity</a>`);
     brandMaterialsHtml = `
       <div class="sidebar-card source-materials-card ${(BRAND_LOGOS[concept.id] && BRAND_LOGOS[concept.id].light) ? 'source-materials-card-dark' : ''}">
         <h3>Brand Materials</h3>
