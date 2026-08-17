@@ -18,9 +18,10 @@ const CONCEPT_NAICS = {
     description: 'Spectator sports, fitness, recreation, and entertainment'
   },
   'trucking-banking': {
-    codes: ['48'], // Transportation and Warehousing
+    codes: ['484110', '484121', '484122', '484220', '484230'],
+    nempCodes: ['484'], // NES only publishes at 3-digit for trucking
     label: 'Trucking & Transportation',
-    description: 'Truck transportation, freight, and logistics operations'
+    description: 'General freight trucking (local & long-distance), specialized freight trucking, and agricultural hauling'
   },
   'construction-and-trades-banking': {
     codes: ['23'], // Construction
@@ -162,22 +163,26 @@ async function fetchCensusData(conceptId, stateFips) {
       // Total establishments
       const cbpUrl = `https://api.census.gov/data/2023/cbp?get=ESTAB,EMP,PAYANN,NAME&NAICS2017=${naicsCode}${geoParam}&key=${CENSUS_API_KEY}`;
 
-      // Nonemployer statistics (solo operators)
-      const nempUrl = `https://api.census.gov/data/2023/nonemp?get=NESTAB,NRCPTOT,NAME&NAICS2022=${naicsCode}${geoParam}&key=${CENSUS_API_KEY}`;
-
-      const [cbpRes, nempRes] = await Promise.allSettled([
-        fetch(cbpUrl).then(r => r.json()),
-        fetch(nempUrl).then(r => r.json())
-      ]);
+      const cbpRes = await fetch(cbpUrl).then(r => r.json()).catch(() => null);
 
       return {
         naics: naicsCode,
-        cbp: cbpRes.status === 'fulfilled' ? cbpRes.value : null,
-        nemp: nempRes.status === 'fulfilled' ? nempRes.value : null
+        cbp: cbpRes,
+        nemp: null
       };
     }));
 
-    return processCensusResults(results, naicsConfig, isNational, stateFips);
+    // Fetch nonemployer stats using nempCodes if specified, otherwise use codes
+    const nempCodesToUse = naicsConfig.nempCodes || naicsConfig.codes;
+    const nempResults = await Promise.all(nempCodesToUse.map(async (naicsCode) => {
+      const nempUrl = `https://api.census.gov/data/2023/nonemp?get=NESTAB,NRCPTOT,NAME&NAICS2022=${naicsCode}${geoParam}&key=${CENSUS_API_KEY}`;
+      const nempRes = await fetch(nempUrl).then(r => r.json()).catch(() => null);
+      return { naics: naicsCode, cbp: null, nemp: nempRes };
+    }));
+
+    const allResults = [...results, ...nempResults];
+
+    return processCensusResults(allResults, naicsConfig, isNational, stateFips);
   } catch (err) {
     console.error('Census API error:', err);
     return null;
@@ -249,6 +254,9 @@ function processCensusResults(results, naicsConfig, isNational, stateFips) {
 // ============================================================
 
 function getSelectedGeo() {
+  // Check persisted census geo (set when user changes dropdown on any page)
+  const persisted = sessionStorage.getItem('censusGeo');
+  if (persisted) return persisted;
   // Check if user selected a geography in the chat wizard (active or persisted)
   if (typeof chatSelections !== 'undefined' && chatSelections && chatSelections['geography']) {
     return chatSelections['geography'];
@@ -261,6 +269,10 @@ function getSelectedGeo() {
     return window._chatSelectedGeo;
   }
   return 'national';
+}
+
+function setSelectedGeo(geo) {
+  sessionStorage.setItem('censusGeo', geo);
 }
 
 function renderCensusSidebar(conceptId) {
@@ -297,6 +309,9 @@ async function loadCensusData(conceptId) {
   if (!select || !resultsEl) return;
 
   const stateFips = select.value;
+
+  // Persist the geo selection so it carries across pages
+  setSelectedGeo(stateFips);
 
   resultsEl.innerHTML = `
     <div class="census-loading">

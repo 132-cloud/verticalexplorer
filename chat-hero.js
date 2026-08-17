@@ -507,6 +507,7 @@ function selectGeoOption(geoId) {
   chatSelections['geography'] = geoId;
   geoFilterText = '';
   chatStep = CHAT_STEPS.length;
+  setSelectedGeo(geoId);
   updateChatContent();
 }
 

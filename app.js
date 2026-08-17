@@ -307,6 +307,7 @@ function handleWizardGeoFilter(value) {
 function selectWizardGeo(geoId) {
   wizardSelections['geography'] = geoId;
   wizardGeoFilter = '';
+  setSelectedGeo(geoId);
   nextWizardStep();
 }
 
@@ -762,25 +763,34 @@ function renderStrategyRoom() {
           <h1>Strategy Room</h1>
           <p class="page-subtitle">Your collaborative workspace for evaluating and prioritizing vertical banking concepts.</p>
 
-          <div class="strategy-room-grid results-grid">
-            ${savedConcepts.map(c => `
-              <div class="concept-card">
-                <div class="card-image" style="background-image: url('${c.image}')">
-                  <div class="card-image-overlay"></div>
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title">${c.name}</h3>
-                  <p class="card-desc">${c.shortDesc}</p>
-                  <div class="card-tags">
-                    ${c.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+          <div class="strategy-room-grid">
+            ${savedConcepts.map(c => {
+              const logoData = BRAND_LOGOS[c.id];
+              const logo = logoData ? (logoData.tileUrl || logoData.url) : '';
+              const vertical = c.tags[1] || '';
+              const audience = c.audienceType || c.tags[0] || '';
+              const financialTags = c.tags.filter(t => 
+                ['Lending', 'Deposits', 'Payments', 'Fee Income', 'Treasury', 'Equipment Finance', 'Invoicing'].includes(t)
+              );
+              const financialProduct = financialTags[0] || c.tags[3] || '';
+              const categoryParts = [vertical, audience, financialProduct].filter(Boolean);
+              const categoryLine = categoryParts.join(' · ');
+              const hasCensus = !!CONCEPT_NAICS[c.id];
+              return `
+              <div class="strategy-tile-wrapper">
+                <div class="browse-tile strategy-tile" onclick="navigateTo('concept', '${c.id}')">
+                  <div class="tile-cover" style="background-image: url('${c.image}')">
+                    <div class="tile-cover-gradient"></div>
+                    <div class="tile-cover-content">
+                      ${logo ? `<img src="${logo}" alt="${c.brandName} logo" class="tile-brand-logo"${logoData.tileLogoSize ? ` style="max-width:${logoData.tileLogoSize}"` : ''} />` : `<h3 class="tile-brand-name">${c.brandName || c.name}</h3>`}
+                      <p class="tile-category-line">${categoryLine}</p>
+                    </div>
                   </div>
-                  <div class="card-actions">
-                    <button class="btn btn-sm btn-primary" onclick="navigateTo('concept', '${c.id}')">View Concept</button>
-                    <button class="btn btn-sm btn-secondary" onclick="removeFromStrategyRoom('${c.id}')">Remove</button>
-                  </div>
+                  <button class="btn btn-sm strategy-tile-remove" onclick="event.stopPropagation(); removeFromStrategyRoom('${c.id}')">Remove</button>
                 </div>
-              </div>
-            `).join('')}
+                ${hasCensus ? `<div class="strategy-tile-census" id="census-${c.id}"><span class="census-loading-dot"></span></div>` : ''}
+              </div>`;
+            }).join('')}
           </div>
 
           <div class="results-actions" style="margin-top: 2rem;">
@@ -790,7 +800,39 @@ function renderStrategyRoom() {
         </div>
       </section>
     `;
+
+    // Load census data for concepts that have it
+    loadStrategyRoomCensus(savedConcepts);
   }
+}
+
+async function loadStrategyRoomCensus(concepts) {
+  const censusTargets = concepts.filter(c => CONCEPT_NAICS[c.id]);
+  const selectedGeo = getSelectedGeo();
+  const stateFips = selectedGeo === 'national' ? null : selectedGeo;
+
+  // Build geo label
+  let geoLabel = 'nationally';
+  if (stateFips) {
+    const state = US_STATES.find(s => s.fips === stateFips);
+    if (state) geoLabel = `in ${state.name}`;
+  }
+
+  await Promise.all(censusTargets.map(async (c) => {
+    const el = document.getElementById(`census-${c.id}`);
+    if (!el) return;
+    try {
+      const data = await fetchCensusData(c.id, stateFips);
+      if (data && data.totalBusinesses > 0) {
+        el.innerHTML = `<span class="census-stat-value">${formatNumber(data.totalBusinesses)}</span> <span class="census-stat-label">total businesses ${geoLabel}</span>`;
+        el.classList.add('loaded');
+      } else {
+        el.remove();
+      }
+    } catch (e) {
+      el.remove();
+    }
+  }));
 }
 
 function removeFromStrategyRoom(conceptId) {
