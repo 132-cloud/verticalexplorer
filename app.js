@@ -496,29 +496,29 @@ function animateBrowseHero() {
 // Brand logo lookup (Cloudinary URLs)
 // url = colored logo for detail pages, tileUrl = white logo for browse tile cards, light = needs dark bg on detail page
 const BRAND_LOGOS = {
-  'trucking-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931535/nymbus-vertical-explorer/logos/convoy-white.svg', light: false },
+  'trucking-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931535/nymbus-vertical-explorer/logos/convoy-white.svg', light: false, tileGradient: 'rgba(232, 120, 12, 0.85)' },
   'healthcare-practice-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928209/nymbus-vertical-explorer/logos/lucrum.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931535/nymbus-vertical-explorer/logos/lucrum-white.svg', light: false },
   'college-athlete-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', light: false },
   'construction-and-trades-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', light: true },
   'professional-services-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928207/nymbus-vertical-explorer/logos/systm.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931540/nymbus-vertical-explorer/logos/systm-white.svg', light: true },
   'family-and-youth-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', light: false },
-  'agriculture-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/prospr.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931539/nymbus-vertical-explorer/logos/prospr-white.png', light: false, tileLogoSize: '160px' },
-  'maker-and-artisan-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', light: false },
+  'agriculture-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/prospr.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931539/nymbus-vertical-explorer/logos/prospr-white.png', light: false, tileLogoSize: '160px', tileGradient: 'rgba(76, 175, 80, 0.85)' },
+  'maker-and-artisan-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', light: false, tileGradient: 'rgba(156, 39, 176, 0.85)' },
   'life-sciences-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928210/nymbus-vertical-explorer/logos/luminary.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928210/nymbus-vertical-explorer/logos/luminary.png', light: true },
   'remittance-and-newcomer-family-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/remesa.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931540/nymbus-vertical-explorer/logos/remesa-white.svg', light: false },
   'values-driven-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928213/nymbus-vertical-explorer/logos/believe.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931536/nymbus-vertical-explorer/logos/believe-white.svg', light: false },
   'veteran-entrepreneur-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928230/nymbus-vertical-explorer/logos/fortus.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935596/nymbus-vertical-explorer/logos/fortus-white.png', light: true },
   'gig-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', light: true },
-  'gamer-and-streamer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', light: true },
-  'survivor-safety-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', light: false },
+  'gamer-and-streamer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', light: true, tileGradient: 'rgba(0, 100, 255, 0.85)' },
+  'survivor-safety-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', light: false, tileGradient: 'rgba(128, 0, 128, 0.85)' },
   'newcomer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928212/nymbus-vertical-explorer/logos/newstart.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931537/nymbus-vertical-explorer/logos/newstart-white.png', light: false },
   'nurse-and-healthcare-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928211/nymbus-vertical-explorer/logos/praecuro.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931538/nymbus-vertical-explorer/logos/praecuro-white.svg', light: false },
-  'outdoor-adventure-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', light: true, tileLogoSize: '160px' },
+  'outdoor-adventure-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', light: true, tileLogoSize: '160px', tileGradient: 'rgba(27, 77, 62, 0.85)' },
   'first-responder-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931556/nymbus-vertical-explorer/logos/bluesyren.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931543/nymbus-vertical-explorer/logos/bluesyren-white.png', light: false },
-  'boat-owner-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931542/nymbus-vertical-explorer/logos/aboard-white.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931542/nymbus-vertical-explorer/logos/aboard-white.png', light: true, tileLogoSize: '160px' },
-  'landscaper-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931558/nymbus-vertical-explorer/logos/verde.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931541/nymbus-vertical-explorer/logos/verde-white.svg', light: false, tileLogoSize: '80px' },
+  'boat-owner-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931542/nymbus-vertical-explorer/logos/aboard-white.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931542/nymbus-vertical-explorer/logos/aboard-white.png', light: true, tileLogoSize: '160px', tileGradient: 'rgba(0, 63, 114, 0.85)' },
+  'landscaper-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931558/nymbus-vertical-explorer/logos/verde.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931541/nymbus-vertical-explorer/logos/verde-white.svg', light: false, tileLogoSize: '80px', tileGradient: 'rgba(56, 142, 60, 0.85)' },
   'k-12-education-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931557/nymbus-vertical-explorer/logos/teacherfi.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931557/nymbus-vertical-explorer/logos/teacherfi-white.png', light: false },
-  'rv-lifestyle-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935598/nymbus-vertical-explorer/logos/mirage.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935599/nymbus-vertical-explorer/logos/mirage-white.svg', light: false },
+  'rv-lifestyle-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935598/nymbus-vertical-explorer/logos/mirage.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935599/nymbus-vertical-explorer/logos/mirage-white.svg', light: false, tileGradient: 'rgba(135, 206, 235, 0.85)' },
   'emerging-athlete-and-artist-wealth-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935594/nymbus-vertical-explorer/logos/sema.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935595/nymbus-vertical-explorer/logos/sema-white.svg', light: false },
   'franchisee-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935596/nymbus-vertical-explorer/logos/seriesf.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935597/nymbus-vertical-explorer/logos/seriesf-white.png', light: false },
 };
@@ -526,6 +526,7 @@ const BRAND_LOGOS = {
 function renderBrowseTile(concept) {
   const logoData = BRAND_LOGOS[concept.id];
   const logo = logoData ? (logoData.tileUrl || logoData.url) : '';
+  const gradientColor = logoData && logoData.tileGradient ? logoData.tileGradient : 'rgba(0, 0, 0, 0.75)';
   // Build category line: Vertical • Audience • Financial product
   const vertical = concept.tags[1] || '';
   const audience = concept.audienceType || concept.tags[0] || '';
@@ -539,7 +540,7 @@ function renderBrowseTile(concept) {
   return `
     <div class="browse-tile" onclick="navigateTo('concept', '${concept.id}')">
       <div class="tile-cover" style="background-image: url('${concept.image}')">
-        <div class="tile-cover-gradient"></div>
+        <div class="tile-cover-gradient" style="background: linear-gradient(to top, ${gradientColor} 0%, rgba(0,0,0,0.3) 40%, transparent 60%)"></div>
         <div class="tile-cover-content">
           ${logo ? `<img src="${logo}" alt="${concept.brandName} logo" class="tile-brand-logo"${logoData.tileLogoSize ? ` style="max-width:${logoData.tileLogoSize}"` : ''} />` : `<h3 class="tile-brand-name">${concept.brandName || concept.name}</h3>`}
           <p class="tile-category-line">${categoryLine}</p>
@@ -768,6 +769,7 @@ function renderStrategyRoom() {
             ${savedConcepts.map(c => {
               const logoData = BRAND_LOGOS[c.id];
               const logo = logoData ? (logoData.tileUrl || logoData.url) : '';
+              const gradientColor = logoData && logoData.tileGradient ? logoData.tileGradient : 'rgba(0, 0, 0, 0.75)';
               const vertical = c.tags[1] || '';
               const audience = c.audienceType || c.tags[0] || '';
               const financialTags = c.tags.filter(t => 
@@ -781,7 +783,7 @@ function renderStrategyRoom() {
               <div class="strategy-tile-wrapper">
                 <div class="browse-tile strategy-tile" onclick="navigateTo('concept', '${c.id}')">
                   <div class="tile-cover" style="background-image: url('${c.image}')">
-                    <div class="tile-cover-gradient"></div>
+                    <div class="tile-cover-gradient" style="background: linear-gradient(to top, ${gradientColor} 0%, rgba(0,0,0,0.3) 40%, transparent 60%)"></div>
                     <div class="tile-cover-content">
                       ${logo ? `<img src="${logo}" alt="${c.brandName} logo" class="tile-brand-logo"${logoData.tileLogoSize ? ` style="max-width:${logoData.tileLogoSize}"` : ''} />` : `<h3 class="tile-brand-name">${c.brandName || c.name}</h3>`}
                       <p class="tile-category-line">${categoryLine}</p>
