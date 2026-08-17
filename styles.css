@@ -1387,6 +1387,33 @@ img {
   flex-wrap: wrap;
 }
 
+.btn-experience {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding: 0.65rem 1.5rem;
+  background: #fff;
+  color: var(--ink-900);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-experience:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25);
+}
+
+.btn-experience svg {
+  flex-shrink: 0;
+}
+
 .concept-body {
   padding-top: 3rem;
   padding-bottom: 4rem;
