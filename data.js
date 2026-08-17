@@ -656,8 +656,8 @@ const CONCEPTS = [
     launchTime: '4-6 months',
     imageDirection: 'Franchise owner in restaurant, retail, or service business context',
     sourceAssetTypes: 'AtAGlance; Deck',
-    ataglanceUrl: 'https://drive.google.com/file/d/1C_8QsM4RfH5HI9t_tQVzlHmHhHFFjw4z/view?usp=drivesdk',
-    deckUrl: 'https://drive.google.com/file/d/1CEw4PzEBPLTHAr1b2iWMjtX1J1u-R9rN/view?usp=drivesdk',
+    ataglanceUrl: '',
+    deckUrl: '',
     teaserUrl: '',
     sourceNotes: 'SeriesF AtAGlance and Deck',
     relatedConcepts: ['trucking-banking', 'veteran-entrepreneur-banking']
