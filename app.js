@@ -494,31 +494,35 @@ function animateBrowseHero() {
 }
 
 // Brand logo lookup (Cloudinary URLs)
-// logoLight = true means the logo is white/light and needs a dark background
+// url = colored logo for detail pages, tileUrl = white logo for browse tile cards, light = needs dark bg on detail page
 const BRAND_LOGOS = {
-  'trucking-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png', light: false },
-  'healthcare-practice-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928209/nymbus-vertical-explorer/logos/lucrum.png', light: false },
-  'college-athlete-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', light: false },
-  'construction-and-trades-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', light: true },
-  'professional-services-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928207/nymbus-vertical-explorer/logos/systm.png', light: true },
-  'family-and-youth-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', light: false },
-  'agriculture-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/prospr.png', light: false },
-  'maker-and-artisan-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', light: false },
-  'life-sciences-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928210/nymbus-vertical-explorer/logos/luminary.png', light: true },
-  'remittance-and-newcomer-family-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/remesa.svg', light: false },
-  'values-driven-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928213/nymbus-vertical-explorer/logos/believe.png', light: false },
-  'veteran-entrepreneur-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928230/nymbus-vertical-explorer/logos/fortus.svg', light: true },
-  'gig-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', light: true },
-  'gamer-and-streamer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', light: true },
-  'survivor-safety-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', light: false },
-  'newcomer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928212/nymbus-vertical-explorer/logos/newstart.png', light: false },
-  'nurse-and-healthcare-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928211/nymbus-vertical-explorer/logos/praecuro.png', light: false },
-  'outdoor-adventure-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', light: true },
+  'trucking-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931535/nymbus-vertical-explorer/logos/convoy-white.svg', light: false },
+  'healthcare-practice-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928209/nymbus-vertical-explorer/logos/lucrum.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931535/nymbus-vertical-explorer/logos/lucrum-white.svg', light: false },
+  'college-athlete-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', light: false },
+  'construction-and-trades-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', light: true },
+  'professional-services-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928207/nymbus-vertical-explorer/logos/systm.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931540/nymbus-vertical-explorer/logos/systm-white.svg', light: true },
+  'family-and-youth-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', light: false },
+  'agriculture-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/prospr.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931539/nymbus-vertical-explorer/logos/prospr-white.png', light: false },
+  'maker-and-artisan-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', light: false },
+  'life-sciences-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928210/nymbus-vertical-explorer/logos/luminary.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928210/nymbus-vertical-explorer/logos/luminary.png', light: true },
+  'remittance-and-newcomer-family-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/remesa.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931540/nymbus-vertical-explorer/logos/remesa-white.svg', light: false },
+  'values-driven-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928213/nymbus-vertical-explorer/logos/believe.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931536/nymbus-vertical-explorer/logos/believe-white.svg', light: false },
+  'veteran-entrepreneur-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928230/nymbus-vertical-explorer/logos/fortus.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931559/nymbus-vertical-explorer/logos/fortus-white.png', light: true },
+  'gig-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', light: true },
+  'gamer-and-streamer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', light: true },
+  'survivor-safety-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', light: false },
+  'newcomer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928212/nymbus-vertical-explorer/logos/newstart.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931537/nymbus-vertical-explorer/logos/newstart-white.png', light: false },
+  'nurse-and-healthcare-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928211/nymbus-vertical-explorer/logos/praecuro.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931538/nymbus-vertical-explorer/logos/praecuro-white.svg', light: false },
+  'outdoor-adventure-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', light: true },
+  'first-responder-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931556/nymbus-vertical-explorer/logos/bluesyren.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931543/nymbus-vertical-explorer/logos/bluesyren-white.png', light: false },
+  'boat-owner-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931542/nymbus-vertical-explorer/logos/aboard-white.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931542/nymbus-vertical-explorer/logos/aboard-white.png', light: true },
+  'landscaper-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931558/nymbus-vertical-explorer/logos/verde.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931541/nymbus-vertical-explorer/logos/verde-white.svg', light: false },
+  'k-12-education-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931557/nymbus-vertical-explorer/logos/teacherfi.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931557/nymbus-vertical-explorer/logos/teacherfi-white.png', light: false },
 };
 
 function renderBrowseTile(concept) {
   const logoData = BRAND_LOGOS[concept.id];
-  const logo = logoData ? logoData.url : '';
+  const logo = logoData ? (logoData.tileUrl || logoData.url) : '';
   // Build category line: Vertical • Audience • Financial product
   const vertical = concept.tags[1] || '';
   const audience = concept.audienceType || concept.tags[0] || '';
