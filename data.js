@@ -8,7 +8,7 @@ const CONCEPTS = [
     name: 'Healthcare Practice Banking',
     brandName: 'Lucrum',
     shortDesc: 'Banking that powers practice finances with modern checking, integrated billing, cash-flow tools, and specialized financing for healthcare practices.',
-    image: 'https://images.pexels.com/photos/7089032/pexels-photo-7089032.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop',
+    image: 'https://images.pexels.com/photos/4989166/pexels-photo-4989166.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop',
     tags: ['SMB', 'Healthcare', 'Payments', 'Deposits', 'Fee Income'],
     category: 'Healthcare, SMB, Professional Services',
     audienceType: 'SMB',
