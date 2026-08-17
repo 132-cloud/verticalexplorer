@@ -494,12 +494,31 @@ function animateBrowseHero() {
 }
 
 // Brand logo lookup (Cloudinary URLs)
+// logoLight = true means the logo is white/light and needs a dark background
 const BRAND_LOGOS = {
-  'trucking-banking': 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png'
+  'trucking-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png', light: false },
+  'healthcare-practice-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928209/nymbus-vertical-explorer/logos/lucrum.png', light: false },
+  'college-athlete-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', light: false },
+  'construction-and-trades-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', light: true },
+  'professional-services-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928207/nymbus-vertical-explorer/logos/systm.png', light: true },
+  'family-and-youth-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', light: false },
+  'agriculture-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/prospr.png', light: false },
+  'maker-and-artisan-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', light: false },
+  'life-sciences-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928210/nymbus-vertical-explorer/logos/luminary.png', light: true },
+  'remittance-and-newcomer-family-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/remesa.svg', light: false },
+  'values-driven-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928213/nymbus-vertical-explorer/logos/believe.png', light: false },
+  'veteran-entrepreneur-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928230/nymbus-vertical-explorer/logos/fortus.svg', light: true },
+  'gig-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', light: true },
+  'gamer-and-streamer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', light: true },
+  'survivor-safety-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', light: false },
+  'newcomer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928212/nymbus-vertical-explorer/logos/newstart.png', light: false },
+  'nurse-and-healthcare-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928211/nymbus-vertical-explorer/logos/praecuro.png', light: false },
+  'outdoor-adventure-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928234/nymbus-vertical-explorer/logos/outbound.svg', light: true },
 };
 
 function renderBrowseTile(concept) {
-  const logo = BRAND_LOGOS[concept.id] || '';
+  const logoData = BRAND_LOGOS[concept.id];
+  const logo = logoData ? logoData.url : '';
   // Build category line: Vertical • Audience • Financial product
   const vertical = concept.tags[1] || '';
   const audience = concept.audienceType || concept.tags[0] || '';
@@ -544,9 +563,9 @@ function renderConceptDetail(conceptId) {
     if (concept.deckUrl) links.push(`<a href="${concept.deckUrl}" target="_blank" rel="noopener" class="source-link">Deck</a>`);
     if (concept.teaserUrl) links.push(`<a href="${concept.teaserUrl}" target="_blank" rel="noopener" class="source-link">Teaser</a>`);
     brandMaterialsHtml = `
-      <div class="sidebar-card source-materials-card">
+      <div class="sidebar-card source-materials-card ${(BRAND_LOGOS[concept.id] && BRAND_LOGOS[concept.id].light) ? 'source-materials-card-dark' : ''}">
         <h3>Brand Materials</h3>
-        ${concept.id === 'trucking-banking' ? `<img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786703901/nymbus-vertical-explorer/convoy-horizontal-orange.png" alt="Convoy logo" class="concept-brand-logo" />` : ''}
+        ${BRAND_LOGOS[concept.id] ? `<img src="${BRAND_LOGOS[concept.id].url}" alt="${concept.brandName} logo" class="concept-brand-logo" />` : ''}
         ${concept.brandName ? `<p class="brand-materials-label">Concept Brand: ${concept.brandName}</p>` : ''}
         ${links.length > 0 ? `<div class="source-links">${links.join('')}</div>` : ''}
       </div>

@@ -1489,6 +1489,29 @@ img {
   margin-bottom: 1rem;
 }
 
+/* Dark variant for light/white logos */
+.source-materials-card-dark {
+  background: var(--ink-900);
+}
+
+.source-materials-card-dark h3 {
+  color: #fff;
+}
+
+.source-materials-card-dark .brand-materials-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.source-materials-card-dark .source-link {
+  color: var(--pink);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.source-materials-card-dark .source-link:hover {
+  background: rgba(255, 69, 112, 0.15);
+  border-color: var(--pink);
+}
+
 .related-section h2 {
   font-size: 24px;
   font-weight: 800;
