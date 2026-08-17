@@ -106,7 +106,7 @@ function renderHome() {
             <button class="chat-pill" onclick="handleChatPillClick('new-geographies')">New geographies</button>
             <button class="chat-pill" onclick="handleChatPillClick('brand-differentiation')">Differentiation</button>
             <button class="chat-pill chat-pill-cta" onclick="navigateTo('browse')">Browse all concepts</button>
-            <button class="chat-pill chat-pill-cta" onclick="window.location.href='mailto:dbarone@nymbus.com'">Build your own</button>
+            <button class="chat-pill chat-pill-cta" onclick="window.open('https://nymbus.com/lp/labs-contact-us/', '_blank')">Build your own</button>
           </div>
         </div>
       </section>
@@ -416,7 +416,7 @@ function renderBrowse() {
           <!-- Left: CTA, Heading, Description -->
           <div class="browse-hero-v2-left">
             <div class="browse-hero-v2-top">
-              <a href="mailto:dbarone@nymbus.com" class="browse-hero-v2-cta">WORK WITH LABS <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
+              <a href="https://nymbus.com/lp/labs-contact-us/" target="_blank" rel="noopener" class="browse-hero-v2-cta">WORK WITH LABS <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
             </div>
 
             <div class="browse-hero-v2-bottom">
@@ -661,8 +661,8 @@ function renderConceptDetail(conceptId) {
 
             <div class="sidebar-actions">
               <button class="btn btn-primary btn-full" onclick="addToStrategyRoom('${concept.id}')">Add to Strategy Room</button>
-              <a href="mailto:dbarone@nymbus.com" class="btn btn-secondary btn-full">Build Your Own</a>
-              <a href="mailto:dbarone@nymbus.com" class="btn btn-secondary btn-full">Explore with Nymbus</a>
+              <a href="https://nymbus.com/lp/labs-contact-us/" target="_blank" rel="noopener" class="btn btn-secondary btn-full">Build Your Own</a>
+              <a href="https://nymbus.com/lp/labs-contact-us/" target="_blank" rel="noopener" class="btn btn-secondary btn-full">Explore with Nymbus</a>
             </div>
           </div>
         </div>
@@ -1076,7 +1076,7 @@ function closeModal() {
 }
 
 function openStrategySession() {
-  window.location.href = 'mailto:dbarone@nymbus.com';
+  window.open('https://nymbus.com/lp/labs-contact-us/', '_blank');
 }
 
 // ============================================================

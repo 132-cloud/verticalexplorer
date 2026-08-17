@@ -620,8 +620,8 @@ function renderChatResults(container) {
       </div>
       <div class="chat-result-actions">
         <button class="chat-action-pill chat-action-primary" onclick="closeChatBox(); setTimeout(() => navigateTo('browse'), 400)">Browse all concepts</button>
-        <button class="chat-action-pill chat-action-primary" onclick="window.location.href='mailto:dbarone@nymbus.com'">Build your own</button>
-        <button class="chat-action-pill" onclick="window.location.href='mailto:dbarone@nymbus.com'">Request strategy session</button>
+        <button class="chat-action-pill chat-action-primary" onclick="window.open('https://nymbus.com/lp/labs-contact-us/', '_blank')">Build your own</button>
+        <button class="chat-action-pill" onclick="window.open('https://nymbus.com/lp/labs-contact-us/', '_blank')">Request strategy session</button>
       </div>
     </div>
   `;
