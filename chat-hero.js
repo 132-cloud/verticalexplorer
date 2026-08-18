@@ -212,17 +212,6 @@ function initShaderBackground(canvas) {
     }
     ctx.fill();
 
-    // Draw glow circle around cursor
-    if (engagement > 0.01) {
-      const glowGrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, glowRadius);
-      glowGrad.addColorStop(0, `rgba(255, 255, 255, ${0.6 * engagement})`);
-      glowGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = glowGrad;
-      ctx.beginPath();
-      ctx.arc(mouseX, mouseY, glowRadius, 0, TWO_PI);
-      ctx.fill();
-    }
-
     animId = requestAnimationFrame(tick);
   }
 
