@@ -100,114 +100,139 @@ function initChatHero() {
 function initShaderBackground(canvas) {
   if (!canvas) return;
 
-  const gl = canvas.getContext('webgl');
-  if (!gl) return;
+  const ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return;
 
-  const vertSrc = `
-    attribute vec2 a_position;
-    void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
-  `;
+  const TWO_PI = Math.PI * 2;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  const fragSrc = `
-    precision highp float;
-    uniform vec2 u_resolution;
-    uniform vec2 u_mouse;
-    uniform float u_time;
+  // DotField config
+  const dotRadius = 1.5;
+  const dotSpacing = 14;
+  const cursorRadius = 500;
+  const bulgeStrength = 67;
+  const glowRadius = 160;
+  const gradientFrom = 'rgba(255, 69, 112, 0.35)';
+  const gradientTo = 'rgba(70, 110, 180, 0.25)';
 
-    void main() {
-      vec2 uv = gl_FragCoord.xy / u_resolution;
-      vec2 mouse = u_mouse;
-
-      // Base: navy ink.900 (#0D1B2A)
-      vec3 col = vec3(0.051, 0.106, 0.165);
-
-      // Aurora pink bloom upper-right (#FF4570)
-      vec2 pinkCenter = vec2(0.72, 0.82);
-      float pinkDist = length((uv - pinkCenter) * vec2(1.0, 1.2));
-      float pinkBloom = exp(-pinkDist * 2.2) * 0.35;
-      col += vec3(1.0, 0.271, 0.439) * pinkBloom;
-
-      // Magenta falloff (#E678BE)
-      float magentaDist = length((uv - vec2(0.6, 0.7)) * vec2(1.1, 1.0));
-      float magentaBloom = exp(-magentaDist * 2.8) * 0.15;
-      col += vec3(0.902, 0.471, 0.745) * magentaBloom;
-
-      // Cool blue accent lower-left (#466EB4)
-      vec2 blueCenter = vec2(0.15, 0.25);
-      float blueDist = length((uv - blueCenter) * vec2(0.9, 1.0));
-      float blueBloom = exp(-blueDist * 2.0) * 0.2;
-      col += vec3(0.275, 0.431, 0.706) * blueBloom;
-
-      // Subtle mouse-following glow (pink)
-      vec2 glowCenter = vec2(mouse.x, 1.0 - mouse.y);
-      float glowDist = length((uv - glowCenter) * vec2(1.4, 1.0));
-      float glow = exp(-glowDist * 4.0) * 0.12;
-      col += vec3(1.0, 0.271, 0.439) * glow;
-
-      // Gentle drift animation
-      float wave = sin(uv.x * 3.0 + u_time * 0.3) * 0.008;
-      wave += sin(uv.y * 2.5 - u_time * 0.2) * 0.006;
-      col += vec3(0.275, 0.431, 0.706) * wave;
-
-      gl_FragColor = vec4(col, 1.0);
-    }
-  `;
-
-  function createShader(type, src) {
-    const s = gl.createShader(type);
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    return s;
-  }
-
-  const prog = gl.createProgram();
-  gl.attachShader(prog, createShader(gl.VERTEX_SHADER, vertSrc));
-  gl.attachShader(prog, createShader(gl.FRAGMENT_SHADER, fragSrc));
-  gl.linkProgram(prog);
-  gl.useProgram(prog);
-
-  const buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
-
-  const aPos = gl.getAttribLocation(prog, 'a_position');
-  gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
-
-  const uRes = gl.getUniformLocation(prog, 'u_resolution');
-  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
-  const uTime = gl.getUniformLocation(prog, 'u_time');
-
-  let mouseX = 0.5, mouseY = 0.5;
+  let dots = [];
+  let w = 0, h = 0, offsetX = 0, offsetY = 0;
+  let mouseX = -9999, mouseY = -9999, prevMouseX = -9999, prevMouseY = -9999, mouseSpeed = 0;
+  let engagement = 0;
+  let frameCount = 0;
   let animId;
+  let resizeTimer;
 
-  function resize() {
-    const dpr = Math.min(window.devicePixelRatio, 2);
-    canvas.width = canvas.clientWidth * dpr;
-    canvas.height = canvas.clientHeight * dpr;
-    gl.viewport(0, 0, canvas.width, canvas.height);
+  function doResize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = `${w}px`;
+    canvas.style.height = `${h}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    offsetX = rect.left + window.scrollX;
+    offsetY = rect.top + window.scrollY;
+    buildDots();
   }
 
-  function render(t) {
-    gl.uniform2f(uRes, canvas.width, canvas.height);
-    gl.uniform2f(uMouse, mouseX, mouseY);
-    gl.uniform1f(uTime, t * 0.001);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    animId = requestAnimationFrame(render);
+  function buildDots() {
+    const step = dotRadius + dotSpacing;
+    const cols = Math.floor(w / step);
+    const rows = Math.floor(h / step);
+    const padX = (w % step) / 2;
+    const padY = (h % step) / 2;
+    dots = new Array(rows * cols);
+    let idx = 0;
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const ax = padX + col * step + step / 2;
+        const ay = padY + row * step + step / 2;
+        dots[idx++] = { ax, ay, sx: ax, sy: ay };
+      }
+    }
   }
 
-  resize();
-  window.addEventListener('resize', resize);
-  animId = requestAnimationFrame(render);
-
-  const heroEl = canvas.closest('.chat-hero');
-  if (heroEl) {
-    heroEl.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = (e.clientX - rect.left) / rect.width;
-      mouseY = (e.clientY - rect.top) / rect.height;
-    });
+  function onMouseMove(e) {
+    mouseX = e.pageX - offsetX;
+    mouseY = e.pageY - offsetY;
   }
+
+  function updateMouseSpeed() {
+    const dx = prevMouseX - mouseX;
+    const dy = prevMouseY - mouseY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    mouseSpeed += (dist - mouseSpeed) * 0.5;
+    if (mouseSpeed < 0.001) mouseSpeed = 0;
+    prevMouseX = mouseX;
+    prevMouseY = mouseY;
+  }
+
+  const speedInterval = setInterval(updateMouseSpeed, 20);
+
+  function tick() {
+    frameCount++;
+    const len = dots.length;
+    const crSq = cursorRadius * cursorRadius;
+    const rad = dotRadius / 2;
+
+    const targetEngagement = Math.min(mouseSpeed / 5, 1);
+    engagement += (targetEngagement - engagement) * 0.06;
+    if (engagement < 0.001) engagement = 0;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, gradientFrom);
+    grad.addColorStop(1, gradientTo);
+    ctx.fillStyle = grad;
+
+    ctx.beginPath();
+    for (let i = 0; i < len; i++) {
+      const d = dots[i];
+      const dx = mouseX - d.ax;
+      const dy = mouseY - d.ay;
+      const distSq = dx * dx + dy * dy;
+
+      if (distSq < crSq && engagement > 0.01) {
+        const dist = Math.sqrt(distSq);
+        const t = 1 - dist / cursorRadius;
+        const push = t * t * bulgeStrength * engagement;
+        const angle = Math.atan2(dy, dx);
+        d.sx += (d.ax - Math.cos(angle) * push - d.sx) * 0.15;
+        d.sy += (d.ay - Math.sin(angle) * push - d.sy) * 0.15;
+      } else {
+        d.sx += (d.ax - d.sx) * 0.1;
+        d.sy += (d.ay - d.sy) * 0.1;
+      }
+
+      ctx.moveTo(d.sx + rad, d.sy);
+      ctx.arc(d.sx, d.sy, rad, 0, TWO_PI);
+    }
+    ctx.fill();
+
+    // Draw glow circle around cursor
+    if (engagement > 0.01) {
+      const glowGrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, glowRadius);
+      glowGrad.addColorStop(0, `rgba(13, 27, 42, ${0.6 * engagement})`);
+      glowGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, glowRadius, 0, TWO_PI);
+      ctx.fill();
+    }
+
+    animId = requestAnimationFrame(tick);
+  }
+
+  doResize();
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(doResize, 100);
+  });
+  window.addEventListener('mousemove', onMouseMove, { passive: true });
+  animId = requestAnimationFrame(tick);
 }
 
 // ============================================================
