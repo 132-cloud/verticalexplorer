@@ -263,16 +263,12 @@ function initHeroShaderOverlay(canvas) {
       vec2 uv = gl_FragCoord.xy / u_resolution;
       vec2 mouse = u_mouse;
 
-      vec2 glowCenter = vec2(mouse.x, 1.0 - mouse.y);
-      float glowDist = length((uv - glowCenter) * vec2(1.2, 1.0));
-      float glow = exp(-glowDist * 2.5) * 0.3;
-
       float wave = sin(uv.x * 5.0 + u_time * 0.4 + mouse.x * 2.0) * 0.015;
       wave += sin(uv.x * 3.0 - u_time * 0.25 + mouse.y * 1.5) * 0.01;
 
       float waveMask = smoothstep(0.2, 0.7, 1.0 - uv.y);
-      float alpha = glow + wave * waveMask * 2.0;
-      alpha = clamp(alpha, 0.0, 0.25);
+      float alpha = wave * waveMask * 2.0;
+      alpha = clamp(alpha, 0.0, 0.15);
 
       gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
     }
