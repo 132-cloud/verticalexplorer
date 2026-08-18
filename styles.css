@@ -441,14 +441,14 @@ img {
   font-weight: 900;
   line-height: 1.0;
   letter-spacing: -0.02em;
-  color: #fff;
+  color: var(--ink-900);
   margin-bottom: 1.5rem;
   text-transform: uppercase;
 }
 
 .chat-hero-subquestion {
   font-size: clamp(1.1rem, 2.5vw, 24px);
-  color: var(--text-on-dark-secondary);
+  color: var(--ink-600);
   line-height: 1.3;
   margin-bottom: 2rem;
   font-weight: 400;
@@ -461,15 +461,15 @@ img {
 }
 
 .chat-prompt-box {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(13, 27, 42, 0.08);
   border-radius: 28px;
   overflow: hidden;
   transition: max-height 0.4s ease-in-out;
   max-height: 56px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
 }
 
 .chat-input-row {
@@ -492,7 +492,7 @@ img {
   background: transparent;
   border: none;
   outline: none;
-  color: #fff;
+  color: var(--ink-900);
   font-family: var(--font);
   font-size: 1rem;
   position: relative;
@@ -504,7 +504,7 @@ img {
   inset: 0;
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(13, 27, 42, 0.4);
   font-size: 1rem;
   pointer-events: none;
   z-index: 1;
@@ -543,7 +543,7 @@ img {
 
 .chat-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(13, 27, 42, 0.08);
   margin-bottom: 1.25rem;
 }
 
@@ -559,13 +559,13 @@ img {
 .chat-response-heading {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--ink-900);
   margin-bottom: 1rem;
 }
 
 .chat-response-body {
   font-size: 0.9rem;
-  color: var(--text-on-dark-secondary);
+  color: var(--ink-600);
   line-height: 1.6;
   margin-bottom: 1.25rem;
 }
@@ -579,9 +579,9 @@ img {
 
 .chat-option-pill {
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(13, 27, 42, 0.05);
+  border: 1px solid rgba(13, 27, 42, 0.12);
+  color: var(--ink-900);
   font-family: var(--font);
   font-size: 0.85rem;
   font-weight: 500;
@@ -591,8 +591,8 @@ img {
 }
 
 .chat-option-pill:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(13, 27, 42, 0.1);
+  border-color: rgba(13, 27, 42, 0.2);
   color: #fff;
 }
 
@@ -660,9 +660,9 @@ img {
 
 .chat-action-pill {
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.8);
+  background: rgba(13, 27, 42, 0.05);
+  border: 1px solid rgba(13, 27, 42, 0.12);
+  color: var(--ink-700);
   font-family: var(--font);
   font-size: 0.8rem;
   font-weight: 600;
@@ -672,7 +672,7 @@ img {
 }
 
 .chat-action-pill:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(13, 27, 42, 0.1);
 }
 
 .chat-action-pill.chat-action-primary {
@@ -697,9 +697,9 @@ img {
 
 .chat-pill {
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.75);
+  background: rgba(13, 27, 42, 0.05);
+  border: 1px solid rgba(13, 27, 42, 0.12);
+  color: var(--ink-700);
   font-family: var(--font);
   font-size: 0.85rem;
   font-weight: 500;
@@ -709,9 +709,9 @@ img {
 }
 
 .chat-pill:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: rgba(13, 27, 42, 0.1);
+  border-color: rgba(13, 27, 42, 0.2);
+  color: var(--ink-900);
 }
 
 .chat-pill-cta {
@@ -1922,10 +1922,10 @@ img {
 .chat-geo-input {
   width: 100%;
   padding: 0.6rem 1rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(13, 27, 42, 0.04);
+  border: 1px solid rgba(13, 27, 42, 0.12);
   border-radius: var(--radius-pill);
-  color: #fff;
+  color: var(--ink-900);
   font-family: var(--font);
   font-size: 0.85rem;
   outline: none;
@@ -1937,7 +1937,7 @@ img {
 }
 
 .chat-geo-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(13, 27, 42, 0.4);
 }
 
 /* --- CENSUS SECTION (SIDEBAR) --- */

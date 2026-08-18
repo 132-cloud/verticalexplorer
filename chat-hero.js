@@ -110,8 +110,8 @@ function initShaderBackground(canvas) {
   const dotRadius = 1.5;
   const dotSpacing = 14;
   const cursorRadius = 500;
-  const bulgeStrength = 67;
-  const glowRadius = 160;
+  const bulgeStrength = 25;
+  const glowRadius = 100;
   const gradientFrom = 'rgba(255, 69, 112, 0.35)';
   const gradientTo = 'rgba(70, 110, 180, 0.25)';
 
@@ -215,7 +215,7 @@ function initShaderBackground(canvas) {
     // Draw glow circle around cursor
     if (engagement > 0.01) {
       const glowGrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, glowRadius);
-      glowGrad.addColorStop(0, `rgba(13, 27, 42, ${0.6 * engagement})`);
+      glowGrad.addColorStop(0, `rgba(255, 255, 255, ${0.6 * engagement})`);
       glowGrad.addColorStop(1, 'transparent');
       ctx.fillStyle = glowGrad;
       ctx.beginPath();
