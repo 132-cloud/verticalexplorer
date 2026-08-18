@@ -107,7 +107,7 @@ function initShaderBackground(canvas) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
   // DotField config
-  const dotRadius = 1.5;
+  const dotRadius = 2;
   const dotSpacing = 14;
   const cursorRadius = 500;
   const bulgeStrength = 25;
