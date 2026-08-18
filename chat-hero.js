@@ -236,6 +236,108 @@ function initShaderBackground(canvas) {
 }
 
 // ============================================================
+// ANIMATED HERO SHADER OVERLAY (WebGL)
+// ============================================================
+
+function initHeroShaderOverlay(canvas) {
+  if (!canvas) return;
+
+  const gl = canvas.getContext('webgl', { premultipliedAlpha: false, alpha: true });
+  if (!gl) return;
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  const vertSrc = `
+    attribute vec2 a_position;
+    void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
+  `;
+
+  const fragSrc = `
+    precision highp float;
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    uniform float u_time;
+
+    void main() {
+      vec2 uv = gl_FragCoord.xy / u_resolution;
+      vec2 mouse = u_mouse;
+
+      vec2 glowCenter = vec2(mouse.x, 1.0 - mouse.y);
+      float glowDist = length((uv - glowCenter) * vec2(1.2, 1.0));
+      float glow = exp(-glowDist * 2.5) * 0.3;
+
+      float wave = sin(uv.x * 5.0 + u_time * 0.4 + mouse.x * 2.0) * 0.015;
+      wave += sin(uv.x * 3.0 - u_time * 0.25 + mouse.y * 1.5) * 0.01;
+
+      float waveMask = smoothstep(0.2, 0.7, 1.0 - uv.y);
+      float alpha = glow + wave * waveMask * 2.0;
+      alpha = clamp(alpha, 0.0, 0.25);
+
+      gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
+    }
+  `;
+
+  function createShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, createShader(gl.VERTEX_SHADER, vertSrc));
+  gl.attachShader(prog, createShader(gl.FRAGMENT_SHADER, fragSrc));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+
+  const aPos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+
+  let mouseX = 0.5, mouseY = 0.5;
+  let animId;
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  function render(t) {
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform2f(uMouse, mouseX, mouseY);
+    gl.uniform1f(uTime, t * 0.001);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    animId = requestAnimationFrame(render);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  animId = requestAnimationFrame(render);
+
+  const parent = canvas.parentElement;
+  if (parent) {
+    parent.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = (e.clientX - rect.left) / rect.width;
+      mouseY = (e.clientY - rect.top) / rect.height;
+    });
+  }
+}
+
+// ============================================================
 // PLACEHOLDER ROTATION
 // ============================================================
 
