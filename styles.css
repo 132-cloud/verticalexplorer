@@ -380,38 +380,7 @@ img {
   justify-content: center;
   padding: 80px 2rem 80px;
   overflow: hidden;
-  background:
-    radial-gradient(60% 55% at 72% 18%, rgba(255, 69, 112, 0.15), transparent 70%),
-    radial-gradient(55% 55% at 10% 90%, rgba(70, 110, 180, 0.1), transparent 70%),
-    var(--ink-900);
-  animation: heroGradientShift 12s ease-in-out infinite alternate;
-}
-
-@keyframes heroGradientShift {
-  0% {
-    background:
-      radial-gradient(60% 55% at 72% 18%, rgba(255, 69, 112, 0.15), transparent 70%),
-      radial-gradient(55% 55% at 10% 90%, rgba(70, 110, 180, 0.1), transparent 70%),
-      var(--ink-900);
-  }
-  33% {
-    background:
-      radial-gradient(60% 55% at 65% 25%, rgba(255, 69, 112, 0.18), transparent 70%),
-      radial-gradient(55% 55% at 15% 80%, rgba(70, 110, 180, 0.12), transparent 70%),
-      var(--ink-900);
-  }
-  66% {
-    background:
-      radial-gradient(60% 55% at 78% 22%, rgba(230, 120, 190, 0.14), transparent 70%),
-      radial-gradient(55% 55% at 8% 85%, rgba(70, 110, 180, 0.14), transparent 70%),
-      var(--ink-900);
-  }
-  100% {
-    background:
-      radial-gradient(60% 55% at 68% 15%, rgba(255, 69, 112, 0.16), transparent 70%),
-      radial-gradient(55% 55% at 12% 92%, rgba(70, 110, 180, 0.11), transparent 70%),
-      var(--ink-900);
-  }
+  background: var(--ink-900);
 }
 
 .chat-hero.pinned-hero {
@@ -421,12 +390,22 @@ img {
   padding: 0 2rem;
 }
 
+.chat-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
 .chat-hero-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   display: block;
+  z-index: 1;
 }
 
 .chat-hero-grain {

@@ -61,7 +61,11 @@ function renderHome() {
   content.innerHTML = `
     <div class="hero-scroll-track">
       <section class="chat-hero pinned-hero">
-        <canvas class="chat-hero-canvas" id="shaderCanvas"></canvas>
+        <video class="chat-hero-video" autoplay loop muted playsinline>
+          <source src="https://res.cloudinary.com/duio2kdnj/video/upload/v1787034433/nymbus-vertical-explorer/footer-cta-bg.webm" type="video/webm" />
+        </video>
+        <canvas class="chat-hero-canvas" id="heroShaderCanvas"></canvas>
+        <canvas class="chat-hero-canvas" id="shaderCanvas" style="z-index:2"></canvas>
         <div class="chat-hero-grain"></div>
         <div class="chat-hero-fade"></div>
 
@@ -111,23 +115,6 @@ function renderHome() {
         </div>
       </section>
     </div>
-
-    <section class="animated-hero-bg" id="animatedHeroBg">
-      <video class="animated-hero-video" autoplay loop muted playsinline>
-        <source src="https://res.cloudinary.com/duio2kdnj/video/upload/v1787034433/nymbus-vertical-explorer/footer-cta-bg.webm" type="video/webm" />
-      </video>
-      <canvas class="animated-hero-shader" id="heroShaderCanvas"></canvas>
-      <div class="animated-hero-grain"></div>
-      <div class="animated-hero-fade"></div>
-      <div class="animated-hero-content">
-        <h2 class="animated-hero-heading">Built to Move</h2>
-        <p class="animated-hero-desc">Nymbus gives financial institutions the technology, strategy, and operational support to launch vertical banking concepts at speed.</p>
-        <div class="animated-hero-actions">
-          <button class="btn btn-primary btn-lg" onclick="navigateTo('browse')">Browse Concepts</button>
-          <a href="https://nymbus.com/lp/labs-contact-us/" target="_blank" rel="noopener" class="btn btn-secondary btn-lg">Talk to Labs</a>
-        </div>
-      </div>
-    </section>
 
     <section class="brand-models">
       <div class="container">
