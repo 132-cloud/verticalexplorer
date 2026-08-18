@@ -64,7 +64,6 @@ function renderHome() {
         <video class="chat-hero-video" autoplay loop muted playsinline>
           <source src="https://res.cloudinary.com/duio2kdnj/video/upload/v1787034433/nymbus-vertical-explorer/footer-cta-bg.webm" type="video/webm" />
         </video>
-        <canvas class="chat-hero-canvas" id="heroShaderCanvas"></canvas>
         <canvas class="chat-hero-canvas" id="shaderCanvas" style="z-index:2"></canvas>
         <div class="chat-hero-grain"></div>
         <div class="chat-hero-fade"></div>
@@ -155,8 +154,6 @@ function renderHome() {
   requestAnimationFrame(() => {
     const canvas = document.getElementById('shaderCanvas');
     if (canvas) initShaderBackground(canvas);
-    const heroShader = document.getElementById('heroShaderCanvas');
-    if (heroShader) initHeroShaderOverlay(heroShader);
     initChatHero();
     initScrollZoom();
   });
