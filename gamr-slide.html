@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Convoy — Trucking Banking</title>
+  <title>GAMR — Gamer and Streamer Banking</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
       --ink: #0d1b2a;
-      --orange: #f74e15;
+      --accent: #0064FF;
       --white: #ffffff;
       --text-body: #c9d2db;
       --text-muted: rgba(201, 210, 219, 0.5);
@@ -67,12 +67,12 @@
       z-index: 1;
     }
 
-    /* ===== UPPER SECTION: Logo + Details + Phone/Card ===== */
+    /* ===== UPPER SECTION ===== */
     .upper-section {
       position: absolute;
       top: 0;
       left: 0;
-      width: 1827px;
+      width: 1920px;
       height: 1080px;
       padding: 74px 40px;
       display: flex;
@@ -80,7 +80,6 @@
       z-index: 2;
     }
 
-    /* Left column: main details */
     .details-col {
       width: 766px;
       padding: 74px 50px;
@@ -115,7 +114,6 @@
       width: 683px;
     }
 
-    /* Experience button */
     .btn-experience {
       display: inline-flex;
       align-items: center;
@@ -138,7 +136,7 @@
       height: 25px;
     }
 
-    /* Right column: phone + card */
+    /* Phone + card column */
     .phone-card-col {
       width: 1011px;
       padding: 67px 50px 74px 134px;
@@ -184,23 +182,22 @@
       filter: drop-shadow(0 12px 40px rgba(0,0,0,0.4));
     }
 
-    /* ===== LOWER SECTION: Problem + Opportunity + Product ===== */
+    /* ===== LOWER SECTION ===== */
     .lower-section {
       position: absolute;
       top: 505px;
       left: 0;
       width: 1452px;
       height: 575px;
-      padding: 74px 40px;
+      padding: 54px 40px;
       display: flex;
       align-items: flex-start;
       z-index: 2;
     }
 
-    /* Problem + Opportunity column */
     .problem-col {
       width: 766px;
-      padding: 74px 50px;
+      padding: 54px 50px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -221,14 +218,13 @@
     .problem-text {
       font-family: Helvetica, Arial, sans-serif;
       font-weight: 300;
-      font-size: 23.8px;
+      font-size: 24.8px;
       line-height: 37.2px;
       color: var(--text-body);
       width: 683px;
       padding-top: 5px;
     }
 
-    /* TAM stats */
     .tam-grid {
       display: flex;
       gap: 12px;
@@ -248,7 +244,7 @@
       font-weight: 700;
       font-size: 50px;
       line-height: 25.6px;
-      color: var(--orange);
+      color: var(--accent);
       text-transform: uppercase;
     }
 
@@ -266,10 +262,9 @@
       font-size: 15px;
       line-height: 37.2px;
       color: var(--text-muted);
-      padding-top: 30px;
+      padding-top: 15px;
     }
 
-    /* Product MVP column */
     .product-col {
       width: 636px;
       padding: 74px 50px 74px 35px;
@@ -283,15 +278,15 @@
       list-style: disc;
       font-family: Helvetica, Arial, sans-serif;
       font-weight: 300;
-      font-size: 23.8px;
+      font-size: 24.8px;
       line-height: 37.2px;
       color: var(--text-body);
       padding-top: 5px;
-      padding-left: 20px;
+      padding-left: 37px;
     }
 
     .feature-list li {
-      margin-bottom: 6px;
+      margin-bottom: 3px;
     }
   </style>
 </head>
@@ -300,20 +295,20 @@
   <div class="slide">
     <!-- Background image -->
     <div class="slide-bg">
-      <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786680464/vertical-explorer/trucking-banking-hero.png" alt="" />
+      <img src="assets/images/GAMR-bg.png" alt="" />
     </div>
 
     <!-- Gradient overlay -->
     <div class="slide-gradient"></div>
 
-    <!-- Upper section: details + phone/card -->
+    <!-- Upper section -->
     <div class="upper-section">
       <!-- Left: main details -->
       <div class="details-col">
-        <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786931535/nymbus-vertical-explorer/logos/convoy-white.svg" alt="Convoy" class="logo" />
-        <p class="vertical-title">Trucking Banking</p>
-        <p class="description">Banking built for life on the road, with mobile business banking, driver cards, invoice factoring, tax savings, forecasting, and asset-based finance.</p>
-        <a href="assets/Convoy_Microsite_Generic-.html" target="_blank" rel="noopener" class="btn-experience">
+        <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1787721036/nymbus-vertical-explorer/logos/gamr-new.svg" alt="GAMR" class="logo" />
+        <p class="vertical-title">Gamer and Streamer Banking</p>
+        <p class="description">High-performance banking with gaming rewards, gear savings, household spending controls, fast account opening, streamer invoicing, and income tracking.</p>
+        <a href="https://www.figma.com/proto/r1bk9MNRg7CvavF4DByO5U/EnterX?node-id=222-2694&t=nWuQxCc7wGSWH05y-1&scaling=min-zoom&content-scaling=fixed&page-id=222%3A2663" target="_blank" rel="noopener" class="btn-experience">
           <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
           Experience
         </a>
@@ -323,47 +318,47 @@
       <div class="phone-card-col">
         <div class="phone-card-grid">
           <div class="mockup-card-wrap">
-            <img src="assets/images/convoy-card1.png" alt="Convoy debit card" class="mockup-card" />
+            <img src="assets/images/GAMR-CARD.png" alt="GAMR card" class="mockup-card" />
           </div>
-          <img src="assets/images/convoy-phone1.png" alt="Convoy app" class="mockup-phone" />
+          <img src="assets/images/GAMR PHONE.png" alt="GAMR app" class="mockup-phone" />
         </div>
       </div>
     </div>
 
-    <!-- Lower section: problem + opportunity + product -->
+    <!-- Lower section -->
     <div class="lower-section">
       <!-- Left: problem + opportunity -->
       <div class="problem-col">
         <p class="section-label">Problem to Solve</p>
-        <p class="problem-text">Truckers face delayed payments, high operating expenses, fuel and maintenance volatility, tax complexity, and cash-flow pressure between loads.</p>
+        <p class="problem-text">Gaming spend is fragmented across platforms. Gamers want rewards and savings for gear, parents need visibility and purchase approvals, and streamers need tools to manage income and invoices.</p>
         <p class="section-label">National Opportunity</p>
         <div class="tam-grid">
           <div class="tam-metric">
-            <span class="tam-value">1.0M</span>
-            <span class="tam-label">Total Businesses</span>
+            <span class="tam-value">190M</span>
+            <span class="tam-label">U.S. Gamers</span>
           </div>
           <div class="tam-metric">
-            <span class="tam-value">879K</span>
-            <span class="tam-label">Solo Operators</span>
+            <span class="tam-value">$58B</span>
+            <span class="tam-label">Annual Spend</span>
           </div>
           <div class="tam-metric">
-            <span class="tam-value">121K</span>
-            <span class="tam-label">1-19 Employees</span>
+            <span class="tam-value">46M</span>
+            <span class="tam-label">Gaming Households</span>
           </div>
         </div>
-        <p class="tam-source">Source: U.S. Census Bureau, County Business Patterns & Nonemployer Statistics (2023)</p>
+        <p class="tam-source">Source: ESA Essential Facts About the U.S. Video Game Industry (2024)</p>
       </div>
 
       <!-- Right: product MVP -->
       <div class="product-col">
         <p class="section-label">Product MVP Thesis</p>
         <ul class="feature-list">
-          <li>Mobile business checking for drivers</li>
-          <li>Reserve savings for fuel and taxes</li>
-          <li>Driver cards with spend controls</li>
-          <li>Load, fuel, and maintenance categorization</li>
-          <li>Invoice factoring and payment tracking</li>
-          <li>Activity based spending forecasts</li>
+          <li>Checking and savings for gamers</li>
+          <li>Gaming cashback and reward offers</li>
+          <li>Gear savings goals</li>
+          <li>Fast digital account opening</li>
+          <li>Household spending controls</li>
+          <li>Purchase requests and parental approvals</li>
         </ul>
       </div>
     </div>
@@ -375,6 +370,7 @@
   <!-- End of HubSpot Embed Code -->
 
   <script>
+    // Contain-style scaling
     function scaleSlide() {
       var slide = document.querySelector('.slide');
       var wrapper = document.querySelector('.slide-wrapper');

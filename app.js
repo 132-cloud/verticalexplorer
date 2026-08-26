@@ -16,6 +16,13 @@ function navigateTo(page, data) {
   closeMobileNav();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
+  // Update hash without triggering hashchange listener
+  const hash = page === 'concept' && data ? `#/concept/${data}` : `#/${page}`;
+  if (window.location.hash !== hash) {
+    window._skipHashChange = true;
+    window.location.hash = hash;
+  }
+
   // Kill any active ScrollTrigger instances from previous page
   if (typeof ScrollTrigger !== 'undefined') {
     ScrollTrigger.getAll().forEach(t => t.kill());
@@ -41,6 +48,30 @@ function navigateTo(page, data) {
     content.style.transform = 'translateY(0)';
   }, 200);
 }
+
+// Hash-based routing
+function handleHashRoute() {
+  const hash = window.location.hash || '#/home';
+  const parts = hash.replace('#/', '').split('/');
+  const page = parts[0] || 'home';
+  const data = parts[1] || undefined;
+
+  if (page === 'concept' && data) {
+    navigateTo('concept', data);
+  } else if (['home', 'wizard', 'browse', 'results', 'how-it-works', 'strategy-room', 'build-your-own'].includes(page)) {
+    navigateTo(page);
+  } else {
+    navigateTo('home');
+  }
+}
+
+window.addEventListener('hashchange', () => {
+  if (window._skipHashChange) {
+    window._skipHashChange = false;
+    return;
+  }
+  handleHashRoute();
+});
 
 function toggleMobileNav() {
   document.getElementById('mobileNav').classList.toggle('active');
@@ -401,9 +432,20 @@ function renderBrowse() {
 
     if (items.length === 0) return '';
 
+    // Add search bar in the Featured Concepts row header
+    const headerHtml = cat.title === 'Featured Concepts'
+      ? `<div class="browse-row-header">
+           <h2 class="row-title">${cat.title}</h2>
+           <div class="browse-search-bar">
+             <svg class="browse-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+             <input type="text" id="browseSearchInput" class="browse-search-input" placeholder="Search concepts..." oninput="handleBrowseSearch(this.value)" />
+           </div>
+         </div>`
+      : `<h2 class="row-title">${cat.title}</h2>`;
+
     return `
-      <div class="browse-row">
-        <h2 class="row-title">${cat.title}</h2>
+      <div class="browse-row" data-category="${cat.title}">
+        ${headerHtml}
         <div class="row-scroll">
           ${items.map(c => renderBrowseTile(c)).join('')}
         </div>
@@ -437,7 +479,8 @@ function renderBrowse() {
           </div>
         </div>
       </div>
-      ${rows}
+      <div id="browseSearchResults" style="display:none;"></div>
+      <div id="browseDefaultRows">${rows}</div>
     </section>
   `;
 
@@ -445,6 +488,51 @@ function renderBrowse() {
   requestAnimationFrame(() => {
     animateBrowseHero();
   });
+}
+
+// ============================================================
+// BROWSE SEARCH FILTER
+// ============================================================
+
+function handleBrowseSearch(query) {
+  const searchResults = document.getElementById('browseSearchResults');
+  const defaultRows = document.getElementById('browseDefaultRows');
+  const trimmed = query.trim().toLowerCase();
+
+  if (!trimmed) {
+    searchResults.style.display = 'none';
+    defaultRows.style.display = '';
+    return;
+  }
+
+  const matches = CONCEPTS.filter(c => {
+    const searchable = [
+      c.name, c.brandName, c.shortDesc, c.audienceType,
+      ...(c.tags || [])
+    ].join(' ').toLowerCase();
+    return searchable.includes(trimmed);
+  });
+
+  defaultRows.style.display = 'none';
+  searchResults.style.display = '';
+
+  if (matches.length === 0) {
+    searchResults.innerHTML = `
+      <div class="browse-row">
+        <p class="browse-search-empty">No concepts match "<strong>${query}</strong>"</p>
+      </div>
+    `;
+    return;
+  }
+
+  searchResults.innerHTML = `
+    <div class="browse-row">
+      <h2 class="row-title">${matches.length} result${matches.length !== 1 ? 's' : ''} for "${query}"</h2>
+      <div class="row-scroll">
+        ${matches.map(c => renderBrowseTile(c)).join('')}
+      </div>
+    </div>
+  `;
 }
 
 function animateBrowseHero() {
@@ -503,7 +591,7 @@ const BRAND_LOGOS = {
   'healthcare-practice-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928209/nymbus-vertical-explorer/logos/lucrum.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931535/nymbus-vertical-explorer/logos/lucrum-white.svg', light: false },
   'college-athlete-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928205/nymbus-vertical-explorer/logos/athelite.png', light: false },
   'construction-and-trades-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/frame.png', light: true },
-  'professional-services-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928207/nymbus-vertical-explorer/logos/systm.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931540/nymbus-vertical-explorer/logos/systm-white.svg', light: true },
+  'professional-services-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928207/nymbus-vertical-explorer/logos/systm.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931540/nymbus-vertical-explorer/logos/systm-white.svg', light: false },
   'family-and-youth-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928208/nymbus-vertical-explorer/logos/scurry.png', light: false },
   'agriculture-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928206/nymbus-vertical-explorer/logos/prospr.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931539/nymbus-vertical-explorer/logos/prospr-white.png', light: false, tileLogoSize: '160px', tileGradient: 'rgba(76, 175, 80, 0.85)' },
   'maker-and-artisan-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/metier.svg', light: false, tileGradient: 'rgba(156, 39, 176, 0.85)' },
@@ -512,7 +600,7 @@ const BRAND_LOGOS = {
   'values-driven-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928213/nymbus-vertical-explorer/logos/believe.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931536/nymbus-vertical-explorer/logos/believe-white.svg', light: false },
   'veteran-entrepreneur-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928230/nymbus-vertical-explorer/logos/fortus.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935596/nymbus-vertical-explorer/logos/fortus-white.png', light: true },
   'gig-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928233/nymbus-vertical-explorer/logos/gigmoney.svg', light: true },
-  'gamer-and-streamer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928232/nymbus-vertical-explorer/logos/gamr.svg', light: true, tileGradient: 'rgba(0, 100, 255, 0.85)' },
+  'gamer-and-streamer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1787721036/nymbus-vertical-explorer/logos/gamr-new.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1787721036/nymbus-vertical-explorer/logos/gamr-new.svg', light: true, tileGradient: 'rgba(0, 100, 255, 0.85)' },
   'survivor-safety-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928237/nymbus-vertical-explorer/logos/vivien.svg', light: false, tileGradient: 'rgba(128, 0, 128, 0.85)' },
   'newcomer-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928212/nymbus-vertical-explorer/logos/newstart.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931537/nymbus-vertical-explorer/logos/newstart-white.png', light: false },
   'nurse-and-healthcare-worker-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786928211/nymbus-vertical-explorer/logos/praecuro.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786931538/nymbus-vertical-explorer/logos/praecuro-white.svg', light: false },
@@ -524,6 +612,8 @@ const BRAND_LOGOS = {
   'rv-lifestyle-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935598/nymbus-vertical-explorer/logos/mirage.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935599/nymbus-vertical-explorer/logos/mirage-white.svg', light: false, tileGradient: 'rgba(135, 206, 235, 0.85)' },
   'emerging-athlete-and-artist-wealth-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935594/nymbus-vertical-explorer/logos/sema.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935595/nymbus-vertical-explorer/logos/sema-white.svg', light: false },
   'franchisee-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935596/nymbus-vertical-explorer/logos/seriesf.png', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1786935597/nymbus-vertical-explorer/logos/seriesf-white.png', light: false, tileGradient: 'rgba(245, 166, 61, 0.85)' },
+  'tech-contractor-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1787130512/nymbus-vertical-explorer/logos/duality.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1787130514/nymbus-vertical-explorer/logos/duality-white.svg', light: false, tileGradient: 'rgba(0, 128, 128, 0.85)' },
+  'memberpath-banking': { url: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1787131077/nymbus-vertical-explorer/logos/memberpath.svg', tileUrl: 'https://res.cloudinary.com/duio2kdnj/image/upload/v1787131079/nymbus-vertical-explorer/logos/memberpath-white.svg', light: false, tileGradient: 'rgba(46, 91, 155, 0.85)' },
 };
 
 function renderBrowseTile(concept) {
@@ -567,12 +657,14 @@ function renderConceptDetail(conceptId) {
 
   // Build brand materials HTML (only if any URLs exist)
   let brandMaterialsHtml = '';
-  const hasSourceLinks = concept.ataglanceUrl || concept.teaserUrl;
+  const hasSourceLinks = concept.ataglanceUrl || concept.teaserUrl || concept.landingPageUrl;
   if (hasSourceLinks || concept.brandName) {
     const links = [];
+    if (concept.landingPageUrl) links.push(`<a href="${concept.landingPageUrl}" target="_blank" rel="noopener" class="source-link">Landing Page</a>`);
     if (concept.ataglanceUrl) links.push(`<a href="${concept.ataglanceUrl}" target="_blank" rel="noopener" class="source-link">At-A-Glance</a>`);
     if (concept.teaserUrl) links.push(`<a href="${concept.teaserUrl}" target="_blank" rel="noopener" class="source-link">Teaser</a>`);
     if (concept.id === 'trucking-banking') links.push(`<a href="https://res.cloudinary.com/duio2kdnj/image/upload/v1786969337/nymbus-vertical-explorer/convoy-brand-identity.png" target="_blank" rel="noopener" class="source-link">Brand Identity</a>`);
+    if (concept.id === 'professional-services-banking') links.push(`<a href="https://www.figma.com/proto/TJpFGoubWgLD9lvEu0ByrH/SYSTM?node-id=0-1&t=aGiSNtwdv6KhQay2-1" target="_blank" rel="noopener" class="source-link">Visual Identity</a>`);
     brandMaterialsHtml = `
       <div class="sidebar-card source-materials-card ${(BRAND_LOGOS[concept.id] && BRAND_LOGOS[concept.id].light) ? 'source-materials-card-dark' : ''}">
         <h3>Brand Materials</h3>
@@ -646,6 +738,7 @@ function renderConceptDetail(conceptId) {
 
           <div class="concept-sidebar">
             ${CONCEPT_NAICS[concept.id] ? renderCensusSidebar(concept.id) : ''}
+            ${CONCEPT_SOC_CODES[concept.id] ? renderBlsOesSidebar(concept.id) : ''}
 
             <div class="sidebar-card">
               <h3>Quick Facts</h3>
@@ -687,6 +780,10 @@ function renderConceptDetail(conceptId) {
   // Auto-load census data if available for this concept
   if (CONCEPT_NAICS[concept.id]) {
     requestAnimationFrame(() => loadCensusData(concept.id));
+  }
+  // Auto-load BLS OES workforce data if available for this concept
+  if (CONCEPT_SOC_CODES[concept.id]) {
+    requestAnimationFrame(() => loadBlsOesData(concept.id));
   }
 }
 
@@ -1092,5 +1189,9 @@ function openStrategySession() {
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  navigateTo('home');
+  if (window.location.hash && window.location.hash !== '#/' && window.location.hash !== '#/home') {
+    handleHashRoute();
+  } else {
+    navigateTo('home');
+  }
 });
