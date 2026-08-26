@@ -738,7 +738,7 @@ function renderConceptDetail(conceptId) {
 
           <div class="concept-sidebar">
             ${CONCEPT_NAICS[concept.id] ? renderCensusSidebar(concept.id) : ''}
-            ${CONCEPT_SOC_CODES[concept.id] ? renderBlsOesSidebar(concept.id) : ''}
+            ${typeof CONCEPT_SOC_CODES !== 'undefined' && CONCEPT_SOC_CODES[concept.id] ? renderBlsOesSidebar(concept.id) : ''}
 
             <div class="sidebar-card">
               <h3>Quick Facts</h3>
@@ -782,7 +782,7 @@ function renderConceptDetail(conceptId) {
     requestAnimationFrame(() => loadCensusData(concept.id));
   }
   // Auto-load BLS OES workforce data if available for this concept
-  if (CONCEPT_SOC_CODES[concept.id]) {
+  if (typeof CONCEPT_SOC_CODES !== 'undefined' && CONCEPT_SOC_CODES[concept.id]) {
     requestAnimationFrame(() => loadBlsOesData(concept.id));
   }
 }
