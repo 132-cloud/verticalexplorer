@@ -609,15 +609,15 @@ img {
   align-items: center;
   gap: 0.75rem;
   padding: 0.6rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(13, 27, 42, 0.03);
+  border: 1px solid rgba(13, 27, 42, 0.1);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .chat-result-card:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(13, 27, 42, 0.06);
   border-color: rgba(255, 69, 112, 0.3);
 }
 
@@ -640,12 +640,12 @@ img {
 .chat-result-name {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--ink-900);
 }
 
 .chat-result-desc {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--ink-600);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2078,6 +2078,61 @@ img {
   font-size: 11px;
   color: var(--ink-600);
   opacity: 0.6;
+}
+
+/* --- BLS OES WORKFORCE SIDEBAR --- */
+.bls-oes-sidebar-card {
+  background: var(--surface-tint);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.bls-oes-sidebar-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--ink-900);
+}
+
+.bls-occ-breakdown {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.bls-occ-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-600);
+  margin-bottom: 0.5rem;
+}
+
+.bls-occ-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.bls-occ-row:last-child {
+  border-bottom: none;
+}
+
+.bls-occ-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-900);
+  line-height: 1.3;
+}
+
+.bls-occ-stats {
+  font-size: 11px;
+  color: var(--ink-600);
 }
 
 /* --- BUILD YOUR OWN PAGE --- */
