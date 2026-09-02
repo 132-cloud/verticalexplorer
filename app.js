@@ -12,6 +12,11 @@ let wizardGeoFilter = '';
 // ============================================================
 
 function navigateTo(page, data) {
+  // Track time spent on current concept before navigating away
+  if (typeof trackConceptViewEnd === 'function') {
+    trackConceptViewEnd();
+  }
+
   currentPage = page;
   closeMobileNav();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -432,20 +437,9 @@ function renderBrowse() {
 
     if (items.length === 0) return '';
 
-    // Add search bar in the Featured Concepts row header
-    const headerHtml = cat.title === 'Featured Concepts'
-      ? `<div class="browse-row-header">
-           <h2 class="row-title">${cat.title}</h2>
-           <div class="browse-search-bar">
-             <svg class="browse-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-             <input type="text" id="browseSearchInput" class="browse-search-input" placeholder="Search concepts..." oninput="handleBrowseSearch(this.value)" />
-           </div>
-         </div>`
-      : `<h2 class="row-title">${cat.title}</h2>`;
-
     return `
       <div class="browse-row" data-category="${cat.title}">
-        ${headerHtml}
+        <h2 class="row-title">${cat.title}</h2>
         <div class="row-scroll">
           ${items.map(c => renderBrowseTile(c)).join('')}
         </div>
@@ -479,8 +473,7 @@ function renderBrowse() {
           </div>
         </div>
       </div>
-      <div id="browseSearchResults" style="display:none;"></div>
-      <div id="browseDefaultRows">${rows}</div>
+      ${rows}
     </section>
   `;
 
@@ -488,51 +481,6 @@ function renderBrowse() {
   requestAnimationFrame(() => {
     animateBrowseHero();
   });
-}
-
-// ============================================================
-// BROWSE SEARCH FILTER
-// ============================================================
-
-function handleBrowseSearch(query) {
-  const searchResults = document.getElementById('browseSearchResults');
-  const defaultRows = document.getElementById('browseDefaultRows');
-  const trimmed = query.trim().toLowerCase();
-
-  if (!trimmed) {
-    searchResults.style.display = 'none';
-    defaultRows.style.display = '';
-    return;
-  }
-
-  const matches = CONCEPTS.filter(c => {
-    const searchable = [
-      c.name, c.brandName, c.shortDesc, c.audienceType,
-      ...(c.tags || [])
-    ].join(' ').toLowerCase();
-    return searchable.includes(trimmed);
-  });
-
-  defaultRows.style.display = 'none';
-  searchResults.style.display = '';
-
-  if (matches.length === 0) {
-    searchResults.innerHTML = `
-      <div class="browse-row">
-        <p class="browse-search-empty">No concepts match "<strong>${query}</strong>"</p>
-      </div>
-    `;
-    return;
-  }
-
-  searchResults.innerHTML = `
-    <div class="browse-row">
-      <h2 class="row-title">${matches.length} result${matches.length !== 1 ? 's' : ''} for "${query}"</h2>
-      <div class="row-scroll">
-        ${matches.map(c => renderBrowseTile(c)).join('')}
-      </div>
-    </div>
-  `;
 }
 
 function animateBrowseHero() {
@@ -650,6 +598,11 @@ function renderBrowseTile(concept) {
 function renderConceptDetail(conceptId) {
   const concept = CONCEPTS.find(c => c.id === conceptId);
   if (!concept) { navigateTo('browse'); return; }
+
+  // Track concept view in HubSpot
+  if (typeof trackConceptViewStart === 'function') {
+    trackConceptViewStart(conceptId, concept.brandName || concept.name);
+  }
 
   const related = (concept.relatedConcepts || [])
     .map(id => CONCEPTS.find(c => c.id === id))
@@ -1166,6 +1119,12 @@ function addToStrategyRoom(conceptId) {
   if (!strategyRoomConcepts.includes(conceptId)) {
     strategyRoomConcepts.push(conceptId);
     localStorage.setItem('strategyRoomConcepts', JSON.stringify(strategyRoomConcepts));
+    
+    // Track Strategy Room addition in HubSpot
+    const concept = CONCEPTS.find(c => c.id === conceptId);
+    if (typeof trackStrategyRoomAdd === 'function' && concept) {
+      trackStrategyRoomAdd(conceptId, concept.brandName || concept.name);
+    }
   }
 
   // Show confirmation modal

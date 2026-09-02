@@ -11,8 +11,9 @@
   <div class="password-gate" id="passwordGate">
     <div class="password-gate-inner">
       <img src="https://res.cloudinary.com/duio2kdnj/image/upload/v1786677471/nymbus-vertical-explorer/nymbus-lockup-black.png" alt="Nymbus" class="password-gate-logo" />
-      <p class="password-gate-label">Enter password to continue</p>
+      <p class="password-gate-label">Enter your details to continue</p>
       <form class="password-gate-form" onsubmit="checkPassword(event)">
+        <input type="email" id="emailInput" class="password-gate-input" placeholder="Work email" autocomplete="email" required />
         <input type="password" id="passwordInput" class="password-gate-input" placeholder="Password" autocomplete="off" />
         <button type="submit" class="btn btn-primary password-gate-btn">Enter</button>
       </form>
@@ -59,25 +60,124 @@
   </div>
 
   <script>
+    // ============================================================
+    // HUBSPOT IDENTIFICATION & TRACKING
+    // ============================================================
+    (function(){
+      var _hsq = window._hsq = window._hsq || [];
+      
+      // Identify user to HubSpot (creates contact if doesn't exist)
+      function hsIdentify(email) {
+        if (!email || !email.includes('@')) return;
+        if (sessionStorage.getItem('hs_email') === email) return; // don't re-fire
+        sessionStorage.setItem('hs_email', email);
+        _hsq.push(['identify', { email: email }]);
+        _hsq.push(['trackPageView']);
+      }
+      
+      // Check URL param on load: ?email=person@company.com
+      var urlEmail = new URLSearchParams(location.search).get('email');
+      if (urlEmail) hsIdentify(urlEmail);
+      
+      // Expose globally
+      window.hsIdentify = hsIdentify;
+    })();
+
+    // ============================================================
+    // CUSTOM EVENT TRACKING
+    // ============================================================
+    var _conceptViewStart = null;
+    var _currentConceptId = null;
+
+    // Track when user starts viewing a concept
+    function trackConceptViewStart(conceptId, conceptName) {
+      // If switching concepts, track time on previous one
+      if (_currentConceptId && _currentConceptId !== conceptId) {
+        trackConceptViewEnd();
+      }
+      _currentConceptId = conceptId;
+      _conceptViewStart = Date.now();
+      
+      var _hsq = window._hsq = window._hsq || [];
+      _hsq.push(['trackCustomBehavioralEvent', {
+        name: 'pe45317917_viewed_concept',
+        properties: {
+          concept_id: conceptId,
+          concept_name: conceptName
+        }
+      }]);
+    }
+
+    // Track time spent when leaving concept
+    function trackConceptViewEnd() {
+      if (!_conceptViewStart || !_currentConceptId) return;
+      var timeSpent = Math.round((Date.now() - _conceptViewStart) / 1000);
+      
+      var _hsq = window._hsq = window._hsq || [];
+      _hsq.push(['trackCustomBehavioralEvent', {
+        name: 'pe45317917_concept_time_spent',
+        properties: {
+          concept_id: _currentConceptId,
+          time_on_concept_seconds: timeSpent
+        }
+      }]);
+      
+      _conceptViewStart = null;
+      _currentConceptId = null;
+    }
+
+    // Track Strategy Room additions
+    function trackStrategyRoomAdd(conceptId, conceptName) {
+      var _hsq = window._hsq = window._hsq || [];
+      _hsq.push(['trackCustomBehavioralEvent', {
+        name: 'pe45317917_added_to_strategy_room',
+        properties: {
+          concept_id: conceptId,
+          concept_name: conceptName
+        }
+      }]);
+    }
+
+    // Track time when user leaves page
+    window.addEventListener('beforeunload', trackConceptViewEnd);
+
+    // Expose tracking functions globally
+    window.trackConceptViewStart = trackConceptViewStart;
+    window.trackConceptViewEnd = trackConceptViewEnd;
+    window.trackStrategyRoomAdd = trackStrategyRoomAdd;
+
+    // ============================================================
+    // PASSWORD GATE
+    // ============================================================
     function checkPassword(e) {
       e.preventDefault();
-      const input = document.getElementById('passwordInput');
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
       const error = document.getElementById('passwordError');
-      if (input.value === 'nymbuslabs') {
+      
+      if (passwordInput.value === 'nymbuslabs') {
+        // Identify to HubSpot
+        if (emailInput.value) {
+          window.hsIdentify(emailInput.value);
+        }
         sessionStorage.setItem('authenticated', 'true');
         document.getElementById('passwordGate').classList.add('hidden');
       } else {
         error.textContent = 'Incorrect password';
-        input.value = '';
-        input.focus();
+        passwordInput.value = '';
+        passwordInput.focus();
       }
     }
+
     // Check on load
     document.addEventListener('DOMContentLoaded', function() {
       if (sessionStorage.getItem('authenticated') === 'true') {
         document.getElementById('passwordGate').classList.add('hidden');
+        // Re-identify if we have stored email (for returning sessions)
+        var storedEmail = sessionStorage.getItem('hs_email');
+        if (storedEmail) window.hsIdentify(storedEmail);
       } else {
-        document.getElementById('passwordInput').focus();
+        document.getElementById('emailInput').focus();
       }
     });
   </script>
