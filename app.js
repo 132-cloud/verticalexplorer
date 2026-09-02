@@ -376,6 +376,21 @@ function prevWizardStep() {
 // ============================================================
 
 function renderResults() {
+  // Track wizard completion in HubSpot
+  if (typeof window._hsq !== 'undefined') {
+    var _hsq = window._hsq;
+    _hsq.push(['trackCustomBehavioralEvent', {
+      name: 'pe45317917_completed_growth_wizard',
+      properties: {
+        growth_goal: wizardSelections['growth-goal'] || '',
+        audience: wizardSelections['audience'] || '',
+        go_to_market: wizardSelections['go-to-market'] || '',
+        launch_posture: wizardSelections['launch-posture'] || '',
+        geography: wizardSelections['geography'] || 'national'
+      }
+    }]);
+  }
+
   const growthGoal = wizardSelections['growth-goal'] || 'deposits';
   const recommendedIds = RECOMMENDATION_MAP[growthGoal] || RECOMMENDATION_MAP['deposits'];
   const recommended = recommendedIds.map(id => CONCEPTS.find(c => c.id === id)).filter(Boolean);

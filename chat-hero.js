@@ -628,6 +628,21 @@ function selectGeoOption(geoId) {
 // ============================================================
 
 function renderChatResults(container) {
+  // Track chat wizard completion in HubSpot
+  if (typeof window._hsq !== 'undefined') {
+    var _hsq = window._hsq;
+    _hsq.push(['trackCustomBehavioralEvent', {
+      name: 'pe45317917_completed_chat_wizard',
+      properties: {
+        growth_goals: (chatSelections['growth-goal'] || []).join(', '),
+        audience: (chatSelections['audience'] || []).join(', '),
+        go_to_market: chatSelections['go-to-market'] || '',
+        launch_posture: chatSelections['launch-posture'] || '',
+        geography: chatSelections['geography'] || 'national'
+      }
+    }]);
+  }
+
   const growthGoals = Array.isArray(chatSelections['growth-goal'])
     ? chatSelections['growth-goal']
     : [chatSelections['growth-goal'] || 'deposits'];
@@ -748,6 +763,17 @@ function handleChatInput(e) {
   const input = document.getElementById('chatInput');
   const value = input.value.trim().toLowerCase();
   if (!value) return;
+
+  // Track chat text input in HubSpot
+  if (typeof window._hsq !== 'undefined') {
+    var _hsq = window._hsq;
+    _hsq.push(['trackCustomBehavioralEvent', {
+      name: 'pe45317917_chat_text_input',
+      properties: {
+        input_text: input.value.trim()
+      }
+    }]);
+  }
 
   // Check if the input matches a vertical/concept in the library
   const verticalMatch = matchInputToVertical(value);
